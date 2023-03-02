@@ -1,0 +1,32 @@
+{
+  "name": "swiss-docs",
+  "version": "0.0.1",
+  "author": "Jack Cannon <jackc@annon.co.uk> (http://c.annon.co.uk/)",
+  "license": "MIT",
+  "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jackcannon/swiss-docs.git"
+  },
+  "bin": {
+    "swiss-docs": "./dist/index.js"
+  },
+  "devDependencies": {
+    "@swc/cli": "^0.1.62",
+    "@swc/core": "^1.3.36",
+    "@types/node": "^18.14.4",
+    "typescript": "^4.9.5"
+  },
+  "scripts": {
+    "build": "tsc && chmod +x ./dist/index.js",
+    "quickbuild": "rm -rf ./dist && npx swc src -d dist && chmod +x ./dist/index.js",
+    "test": "yarn quickbuild && ./dist/index.js -i example -o example/OUTPUT.md -t example/template.md",
+    "prepublishOnly": "yarn test && yarn build"
+  },
+  "dependencies": {
+    "@types/minimist": "^1.2.2",
+    "glob": "^9.1.2",
+    "minimist": "^1.2.8",
+    "swiss-ak": "^1.22.1"
+  }
+}

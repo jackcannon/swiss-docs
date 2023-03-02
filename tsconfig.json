@@ -1,0 +1,10 @@
+{
+  "compilerOptions": {
+    "target": "ESNext",
+    "moduleResolution": "nodenext",
+    "allowSyntheticDefaultImports": true,
+    "outDir": "./dist",
+    "baseUrl": "./src"
+  },
+  "exclude": [".vscode", ".serverless", ".nimbella", ".git", "node_modules", "run"]
+}
