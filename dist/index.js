@@ -201,7 +201,7 @@ import { exportAndSave } from "./export.js";
  * ```
  */ var run = function() {
     var _ref = _asyncToGenerator(function() {
-        var opts, rawComments, parsedComments, organised, e;
+        var opts, foundComments, parsedComments, organised, e;
         return __generator(this, function(_state) {
             switch(_state.label){
                 case 0:
@@ -224,8 +224,8 @@ import { exportAndSave } from "./export.js";
                         find(opts.src)
                     ];
                 case 1:
-                    rawComments = _state.sent();
-                    parsedComments = parseComments(rawComments);
+                    foundComments = _state.sent();
+                    parsedComments = parseComments(foundComments);
                     organised = organise(parsedComments);
                     return [
                         4,

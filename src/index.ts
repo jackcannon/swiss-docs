@@ -45,8 +45,8 @@ const run = async () => {
     Object.entries(opts).forEach(([key, value]) => console.log(` - ${key}: ${value ?? '\u001b[90m[none]\u001b[39m'}`));
     console.log('');
 
-    const rawComments = await find(opts.src);
-    const parsedComments = parseComments(rawComments);
+    const foundComments = await find(opts.src);
+    const parsedComments = parseComments(foundComments);
 
     const organised = organise(parsedComments);
 

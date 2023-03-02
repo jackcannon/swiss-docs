@@ -3,6 +3,9 @@ function _arrayLikeToArray(arr, len) {
     for(var i = 0, arr2 = new Array(len); i < len; i++)arr2[i] = arr[i];
     return arr2;
 }
+function _arrayWithHoles(arr) {
+    if (Array.isArray(arr)) return arr;
+}
 function _arrayWithoutHoles(arr) {
     if (Array.isArray(arr)) return _arrayLikeToArray(arr);
 }
@@ -38,8 +41,38 @@ function _asyncToGenerator(fn) {
 function _iterableToArray(iter) {
     if (typeof Symbol !== "undefined" && iter[Symbol.iterator] != null || iter["@@iterator"] != null) return Array.from(iter);
 }
+function _iterableToArrayLimit(arr, i) {
+    var _i = arr == null ? null : typeof Symbol !== "undefined" && arr[Symbol.iterator] || arr["@@iterator"];
+    if (_i == null) return;
+    var _arr = [];
+    var _n = true;
+    var _d = false;
+    var _s, _e;
+    try {
+        for(_i = _i.call(arr); !(_n = (_s = _i.next()).done); _n = true){
+            _arr.push(_s.value);
+            if (i && _arr.length === i) break;
+        }
+    } catch (err) {
+        _d = true;
+        _e = err;
+    } finally{
+        try {
+            if (!_n && _i["return"] != null) _i["return"]();
+        } finally{
+            if (_d) throw _e;
+        }
+    }
+    return _arr;
+}
+function _nonIterableRest() {
+    throw new TypeError("Invalid attempt to destructure non-iterable instance.\\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
+}
 function _nonIterableSpread() {
     throw new TypeError("Invalid attempt to spread non-iterable instance.\\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
+}
+function _slicedToArray(arr, i) {
+    return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest();
 }
 function _toConsumableArray(arr) {
     return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread();
@@ -149,7 +182,7 @@ var __generator = this && this.__generator || function(thisArg, body) {
 };
 import fsP from "fs/promises";
 import glob from "glob";
-import { PromiseUtils } from "swiss-ak";
+import { ArrayUtils, PromiseUtils, fn, range } from "swiss-ak";
 var findFiles = function() {
     var _ref = _asyncToGenerator(function(directory) {
         var files;
@@ -177,7 +210,7 @@ var findFiles = function() {
 }();
 var findCommentsInFile = function() {
     var _ref = _asyncToGenerator(function(file) {
-        var text, javadocComments, withMeta;
+        var text, lines, trimmedLines, fileLevelDefinitions, javadocComments, withMeta, founds;
         return __generator(this, function(_state) {
             switch(_state.label){
                 case 0:
@@ -187,13 +220,56 @@ var findCommentsInFile = function() {
                     ];
                 case 1:
                     text = _state.sent();
+                    lines = text.split("\n");
+                    trimmedLines = text.split("\n").map(function(s) {
+                        return s.trim();
+                    });
+                    fileLevelDefinitions = lines.map(function(line, index) {
+                        return [
+                            index,
+                            line
+                        ];
+                    }).filter(function(param) {
+                        var _param = _slicedToArray(param, 2), index = _param[0], line = _param[1];
+                        return line.match(/\/\/ {0,}<!-- {0,}DOCS: ?(.*?) {0,}-->/g);
+                    });
+                    // sort them in a way so that the first one to match is the most recent (basically backwards)
+                    fileLevelDefinitions = ArrayUtils.sortByMapped(fileLevelDefinitions, function(param) {
+                        var _param = _slicedToArray(param, 1), index = _param[0];
+                        return index;
+                    }, fn.desc);
                     javadocComments = _toConsumableArray(text.match(/\/\*{1,3}(.|\n)*?\s\*\//g) || []);
                     withMeta = javadocComments.filter(function(comment) {
                         return comment.match(/<!-- ?DOCS: .*?-->/);
                     });
+                    founds = withMeta.map(function(comment) {
+                        var fileLevelComment = "";
+                        if (fileLevelDefinitions.length) {
+                            var commentLines = comment.split("\n").map(function(s) {
+                                return s.trim();
+                            });
+                            var lineIndex = trimmedLines.findIndex(function(line, index) {
+                                return range(Math.min(3, commentLines.length)).every(function(i) {
+                                    return trimmedLines[index + i] === commentLines[i];
+                                });
+                            });
+                            var fileLevelDef = fileLevelDefinitions.find(function(param) {
+                                var _param = _slicedToArray(param, 1), index = _param[0];
+                                return index <= lineIndex;
+                            });
+                            if (fileLevelDef) {
+                                fileLevelComment = fileLevelDef[1];
+                            }
+                        }
+                        return {
+                            fileLevelComment: fileLevelComment,
+                            file: file,
+                            comment: comment
+                        };
+                    });
                     return [
                         2,
-                        withMeta
+                        founds
                     ];
             }
         });

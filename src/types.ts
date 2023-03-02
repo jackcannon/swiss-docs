@@ -54,6 +54,12 @@ export interface CmdOptions {
   rootId: string;
 }
 
+export interface FoundComment {
+  fileLevelComment: string;
+  file: string;
+  comment: string;
+}
+
 export interface DocSegment {
   priority: number;
   titleLevel: number;

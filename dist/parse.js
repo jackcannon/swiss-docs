@@ -44,20 +44,60 @@ function _unsupportedIterableToArray(o, minLen) {
     if (n === "Map" || n === "Set") return Array.from(n);
     if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen);
 }
-var parseComment = function(comment) {
+var parseMeta = function(comment) {
+    var defaultPriority = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : 10000, defaultTitleLevel = arguments.length > 2 && arguments[2] !== void 0 ? arguments[2] : 0;
+    var _metaContent_match, _metaContent_match1;
     var _comment_match = _slicedToArray(comment.match(/<!-- DOCS:(.*?)-->/), 2), fullMeta = _comment_match[0], metaContent = _comment_match[1];
+    if (!metaContent) {
+        return {
+            fullMeta: fullMeta,
+            priority: defaultPriority,
+            titleLevel: defaultTitleLevel
+        };
+    }
+    var _metaContent_match_;
+    var priority = Number((_metaContent_match_ = (_metaContent_match = metaContent.match(/[0-9.]{1,}/g)) === null || _metaContent_match === void 0 ? void 0 : _metaContent_match[0]) !== null && _metaContent_match_ !== void 0 ? _metaContent_match_ : defaultPriority);
+    var _metaContent_match_1;
+    var titleLevel = ((_metaContent_match_1 = (_metaContent_match1 = metaContent.match(/#+/g)) === null || _metaContent_match1 === void 0 ? void 0 : _metaContent_match1[0]) !== null && _metaContent_match_1 !== void 0 ? _metaContent_match_1 : "#".repeat(defaultTitleLevel)).length;
+    return {
+        fullMeta: fullMeta,
+        priority: priority,
+        titleLevel: titleLevel
+    };
+};
+var parseComment = function(param) {
+    var fileLevelComment = param.fileLevelComment, comment = param.comment;
+    var filePriority = undefined;
+    var fileTitleLevel = undefined;
+    if (fileLevelComment) {
+        var _parseMeta = parseMeta(fileLevelComment), priority = _parseMeta.priority, titleLevel = _parseMeta.titleLevel;
+        filePriority = priority;
+        fileTitleLevel = titleLevel;
+    }
     // parse the metadata
-    var priority = Number(metaContent.match(/[0-9.]/g)[0]);
-    var titleLevel = metaContent.match(/#+/g)[0].length;
+    var _parseMeta1 = parseMeta(comment, filePriority, fileTitleLevel), fullMeta = _parseMeta1.fullMeta, priority1 = _parseMeta1.priority, titleLevel1 = _parseMeta1.titleLevel;
     // parse the content
     var withoutMeta = comment.replace(fullMeta, "");
     var content = withoutMeta.replace(/(^\/\*{1,3}\n?)|(\n?[ \t]{0,}\*\/$)/g, "").replace(/(^|\n)[ \t]{0,}\* ?/g, "\n").replace(/^\n/g, "");
     var _content_split_map = _slicedToArray(content.split(RegExp("\\n(.*)", "s")).map(function(s) {
         return s.trim();
     }), 2), title = _content_split_map[0], body = _content_split_map[1];
+    // if (title === 'update') {
+    //   console.log('DEBUG', {
+    //     fileLevelComment,
+    //     comment,
+    //     filePriority,
+    //     fileTitleLevel,
+    //     fullMeta,
+    //     priority,
+    //     titleLevel,
+    //     title,
+    //     body
+    //   });
+    // }
     return {
-        priority: priority,
-        titleLevel: titleLevel,
+        priority: priority1,
+        titleLevel: titleLevel1,
         title: title,
         body: body
     };

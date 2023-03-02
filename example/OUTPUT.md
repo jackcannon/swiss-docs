@@ -7,7 +7,8 @@ Table of contents:
   - [Table of Contents](#)
   - [Intro](#intro)
       - [run](#run)
-    - [Sub folder](#sub-folder)
+    - [Sub folder A (higher priority)](#sub-folder-a-higher-priority)
+    - [Sub folder B](#sub-folder-b)
       - [subFunc](#subfunc)
 
 <!-- DOCS: TOC END -->
@@ -31,7 +32,11 @@ const example = run('foo');
 @returns {string} the foo
 
 
-## Sub folder
+## Sub folder A (higher priority)
+Should show above Sub Folder B
+
+
+## Sub folder B
 
 ### subFunc
 this logs it out

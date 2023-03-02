@@ -7,5 +7,9 @@ export var organise = function(comments) {
     var sorted = ArrayUtils.sortByMapped(groups, function(g) {
         return g[0].priority;
     });
+    // console.log(
+    //   'DEBUG',
+    //   sorted.map((g) => g.map(({ priority, title }) => ({ priority, title })))
+    // );
     return sorted.flat();
 };
