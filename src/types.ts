@@ -1,23 +1,29 @@
-/**<!-- DOCS: 1 ## -->
+/**<!-- DOCS: 2 ## -->
  * Command line options
  */
 export interface CmdOptions {
-  /**<!-- DOCS: 1 ### -->
-   * --src, -s or -i
+  /**<!-- DOCS: 2 ### -->
+   * --src
+   *
+   * Alias: -s or -i
    *
    * The source folder to search for documentation
    */
   src: string;
 
-  /**<!-- DOCS: 1 ### -->
-   * --output or -o
+  /**<!-- DOCS: 2 ### -->
+   * --output
+   *
+   * Alias: -o
    *
    * The output file to write the markdown to
    */
   output: string;
 
-  /**<!-- DOCS: 1 ### -->
-   * --template or -t
+  /**<!-- DOCS: 2 ### -->
+   * --template
+   *
+   * Alias: -t
    *
    * An optional template to use for the output markdown
    *
@@ -25,8 +31,21 @@ export interface CmdOptions {
    */
   template: string;
 
-  /**<!-- DOCS: 1 ### -->
-   * --rootid or -r
+  /**<!-- DOCS: 2 ### -->
+   * --header
+   *
+   * Alias: -h
+   *
+   * The name to use at the top of the table of contents
+   *
+   * Default: 'Table of Contents'
+   */
+  header: string;
+
+  /**<!-- DOCS: 2 ### -->
+   * --rootid
+   *
+   * Alias: -r
    *
    * The name of the root id that 'Back to Top' links will use
    *

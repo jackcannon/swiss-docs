@@ -1,4 +1,12 @@
 #!/usr/bin/env node
+function _arrayLikeToArray(arr, len) {
+    if (len == null || len > arr.length) len = arr.length;
+    for(var i = 0, arr2 = new Array(len); i < len; i++)arr2[i] = arr[i];
+    return arr2;
+}
+function _arrayWithHoles(arr) {
+    if (Array.isArray(arr)) return arr;
+}
 function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) {
     try {
         var info = gen[key](arg);
@@ -27,6 +35,44 @@ function _asyncToGenerator(fn) {
             _next(undefined);
         });
     };
+}
+function _iterableToArrayLimit(arr, i) {
+    var _i = arr == null ? null : typeof Symbol !== "undefined" && arr[Symbol.iterator] || arr["@@iterator"];
+    if (_i == null) return;
+    var _arr = [];
+    var _n = true;
+    var _d = false;
+    var _s, _e;
+    try {
+        for(_i = _i.call(arr); !(_n = (_s = _i.next()).done); _n = true){
+            _arr.push(_s.value);
+            if (i && _arr.length === i) break;
+        }
+    } catch (err) {
+        _d = true;
+        _e = err;
+    } finally{
+        try {
+            if (!_n && _i["return"] != null) _i["return"]();
+        } finally{
+            if (_d) throw _e;
+        }
+    }
+    return _arr;
+}
+function _nonIterableRest() {
+    throw new TypeError("Invalid attempt to destructure non-iterable instance.\\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
+}
+function _slicedToArray(arr, i) {
+    return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest();
+}
+function _unsupportedIterableToArray(o, minLen) {
+    if (!o) return;
+    if (typeof o === "string") return _arrayLikeToArray(o, minLen);
+    var n = Object.prototype.toString.call(o).slice(8, -1);
+    if (n === "Object" && o.constructor) n = o.constructor.name;
+    if (n === "Map" || n === "Set") return Array.from(n);
+    if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen);
 }
 var __generator = this && this.__generator || function(thisArg, body) {
     var f, y, t, g, _ = {
@@ -128,13 +174,51 @@ import { find } from "./find.js";
 import { parseComments } from "./parse.js";
 import { organise } from "./organise.js";
 import { exportAndSave } from "./export.js";
-var run = function() {
+/*<!-- DOCS: 1 ### -->
+ * Setup
+ */ /*<!-- DOCS: 1 ### -->
+ * Install
+ *
+ * ```bash
+ * yarn add -D swiss-docs
+ * ```
+ *
+ * or
+ *
+ * ```bash
+ * npm install --save-dev swiss-docs
+ * ```
+ */ /*<!-- DOCS: 1 ### -->
+ * Add to scripts
+ *
+ * Add a script to your package.json
+ *
+ * ```json
+ * {
+ *  "scripts": {
+ *   "docs": "swiss-docs -i src -o README.md"
+ * }
+ * ```
+ */ var run = function() {
     var _ref = _asyncToGenerator(function() {
-        var opts, rawComments, parsedComments, organised;
+        var opts, rawComments, parsedComments, organised, e;
         return __generator(this, function(_state) {
             switch(_state.label){
                 case 0:
+                    _state.trys.push([
+                        0,
+                        3,
+                        ,
+                        4
+                    ]);
                     opts = getOptions();
+                    console.log("");
+                    console.log("Running \x1b[1mswiss-docs\x1b[22m with options:");
+                    Object.entries(opts).forEach(function(param) {
+                        var _param = _slicedToArray(param, 2), key = _param[0], value = _param[1];
+                        return console.log(" - ".concat(key, ": ").concat(value !== null && value !== void 0 ? value : "\x1b[90m[none]\x1b[39m"));
+                    });
+                    console.log("");
                     return [
                         4,
                         find(opts.src)
@@ -149,6 +233,19 @@ var run = function() {
                     ];
                 case 2:
                     _state.sent();
+                    return [
+                        3,
+                        4
+                    ];
+                case 3:
+                    e = _state.sent();
+                    console.error(e);
+                    process.exit(1);
+                    return [
+                        3,
+                        4
+                    ];
+                case 4:
                     return [
                         2
                     ];

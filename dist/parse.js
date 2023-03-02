@@ -51,7 +51,7 @@ var parseComment = function(comment) {
     var titleLevel = metaContent.match(/#+/g)[0].length;
     // parse the content
     var withoutMeta = comment.replace(fullMeta, "");
-    var content = withoutMeta.replace(/(^\/\*{2,3}\n?)|(\n? ?\*\/$)/g, "").replace(/(^|\n) ?\* ?/g, "\n").replace(/^\n/g, "");
+    var content = withoutMeta.replace(/(^\/\*{1,3}\n?)|(\n?[ \t]{0,}\*\/$)/g, "").replace(/(^|\n)[ \t]{0,}\* ?/g, "\n").replace(/^\n/g, "");
     var _content_split_map = _slicedToArray(content.split(RegExp("\\n(.*)", "s")).map(function(s) {
         return s.trim();
     }), 2), title = _content_split_map[0], body = _content_split_map[1];

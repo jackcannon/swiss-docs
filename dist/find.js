@@ -187,7 +187,7 @@ var findCommentsInFile = function() {
                     ];
                 case 1:
                     text = _state.sent();
-                    javadocComments = _toConsumableArray(text.match(/\/\*{2,3}(.|\n)*?\s\*\//g));
+                    javadocComments = _toConsumableArray(text.match(/\/\*{1,3}(.|\n)*?\s\*\//g) || []);
                     withMeta = javadocComments.filter(function(comment) {
                         return comment.match(/<!-- ?DOCS: .*?-->/);
                     });
@@ -204,7 +204,7 @@ var findCommentsInFile = function() {
 }();
 export var find = function() {
     var _ref = _asyncToGenerator(function(directory) {
-        var allFiles, allComments;
+        var allFiles, allCommentsRaw, allComments;
         return __generator(this, function(_state) {
             switch(_state.label){
                 case 0:
@@ -219,7 +219,8 @@ export var find = function() {
                         PromiseUtils.mapLimit(16, allFiles, findCommentsInFile)
                     ];
                 case 2:
-                    allComments = _state.sent().flat();
+                    allCommentsRaw = _state.sent();
+                    allComments = allCommentsRaw.flat();
                     return [
                         2,
                         allComments

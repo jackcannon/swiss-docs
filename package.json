@@ -21,6 +21,7 @@
     "build": "tsc && chmod +x ./dist/index.js",
     "quickbuild": "rm -rf ./dist && npx swc src -d dist && chmod +x ./dist/index.js",
     "test": "yarn quickbuild && ./dist/index.js -i example -o example/OUTPUT.md -t example/template.md",
+    "docs": "yarn quickbuild && ./dist/index.js -i src -o README.md -r=swiss-docs",
     "prepublishOnly": "yarn test && yarn build"
   },
   "dependencies": {

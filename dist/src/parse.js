@@ -6,8 +6,8 @@ const parseComment = (comment) => {
     // parse the content
     const withoutMeta = comment.replace(fullMeta, '');
     const content = withoutMeta
-        .replace(/(^\/\*{2,3}\n?)|(\n? ?\*\/$)/g, '')
-        .replace(/(^|\n) ?\* ?/g, '\n')
+        .replace(/(^\/\*{1,3}\n?)|(\n?[ \t]{0,}\*\/$)/g, '')
+        .replace(/(^|\n)[ \t]{0,}\* ?/g, '\n')
         .replace(/^\n/g, '');
     const [title, body] = content.split(/\n(.*)/s).map((s) => s.trim());
     return {
