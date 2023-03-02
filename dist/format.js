@@ -50,7 +50,7 @@ var formatMainSegment = function(segment, opts) {
     if (segment.body !== undefined) {
         output += "\n" + segment.body + "\n";
         // Back to top
-        var backToTop = opts.rootId ? '\n<p style="text-align: right"><a href="#'.concat(opts.rootId, '"> [↑ Back to top ↑] </a></p>') : "";
+        var backToTop = opts.rootId ? '\n<p style="text-align: right" align="right"><a href="#'.concat(opts.rootId, '"> [↑ Back to top ↑] </a></p>') : "";
         output += backToTop;
     }
     return output;

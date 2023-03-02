@@ -32,7 +32,7 @@ const formatMainSegment = (segment: DocSegment, opts: CmdOptions): string => {
     output += '\n' + segment.body + '\n';
 
     // Back to top
-    const backToTop = opts.rootId ? `\n<p style="text-align: right"><a href="#${opts.rootId}"> [↑ Back to top ↑] </a></p>` : '';
+    const backToTop = opts.rootId ? `\n<p style="text-align: right" align="right"><a href="#${opts.rootId}"> [↑ Back to top ↑] </a></p>` : '';
     output += backToTop;
   }
 
