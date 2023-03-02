@@ -32,7 +32,7 @@ or
 npm install --save-dev swiss-docs
 ```
 
-<a href="#swiss-docs" style="text-align: right"> [↑ Back to top ↑] </a>
+<p style="text-align: right"><a href="#swiss-docs"> [↑ Back to top ↑] </a></p>
 
 ### Add to scripts
 Add a script to your package.json
@@ -44,7 +44,7 @@ Add a script to your package.json
 }
 ```
 
-<a href="#swiss-docs" style="text-align: right"> [↑ Back to top ↑] </a>
+<p style="text-align: right"><a href="#swiss-docs"> [↑ Back to top ↑] </a></p>
 
 ## Command line options
 
@@ -53,14 +53,14 @@ Alias: -s or -i
 
 The source folder to search for documentation
 
-<a href="#swiss-docs" style="text-align: right"> [↑ Back to top ↑] </a>
+<p style="text-align: right"><a href="#swiss-docs"> [↑ Back to top ↑] </a></p>
 
 ### --output
 Alias: -o
 
 The output file to write the markdown to
 
-<a href="#swiss-docs" style="text-align: right"> [↑ Back to top ↑] </a>
+<p style="text-align: right"><a href="#swiss-docs"> [↑ Back to top ↑] </a></p>
 
 ### --template
 Alias: -t
@@ -69,7 +69,7 @@ An optional template to use for the output markdown
 
 Default: [output]
 
-<a href="#swiss-docs" style="text-align: right"> [↑ Back to top ↑] </a>
+<p style="text-align: right"><a href="#swiss-docs"> [↑ Back to top ↑] </a></p>
 
 ### --header
 Alias: -h
@@ -78,7 +78,7 @@ The name to use at the top of the table of contents
 
 Default: 'Table of Contents'
 
-<a href="#swiss-docs" style="text-align: right"> [↑ Back to top ↑] </a>
+<p style="text-align: right"><a href="#swiss-docs"> [↑ Back to top ↑] </a></p>
 
 ### --rootid
 Alias: -r
@@ -87,7 +87,7 @@ The name of the root id that 'Back to Top' links will use
 
 Default: wont add a 'Back to Top' link
 
-<a href="#swiss-docs" style="text-align: right"> [↑ Back to top ↑] </a>
+<p style="text-align: right"><a href="#swiss-docs"> [↑ Back to top ↑] </a></p>
 
 <!-- DOCS: MAIN END -->
 
