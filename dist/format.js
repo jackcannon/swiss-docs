@@ -49,10 +49,10 @@ var formatMainSegment = function(segment, opts) {
     // Body
     if (segment.body !== undefined) {
         output += "\n" + segment.body + "\n";
+        // Back to top
+        var backToTop = opts.rootId ? "\n[↑ Back to top ↑](#".concat(opts.rootId, ")") : "";
+        output += backToTop;
     }
-    // Back to top
-    var backToTop = opts.rootId ? "\n[↑ Back to top ↑](#".concat(opts.rootId, ")") : "";
-    output += backToTop;
     return output;
 };
 export var formatMain = function(segments, opts) {

@@ -20,7 +20,6 @@ Here are the docs
 <!-- DOCS: MAIN START -->
 
 ### Setup
-[↑ Back to top ↑](#swiss-docs)
 
 ### Install
 ```bash
@@ -48,7 +47,6 @@ Add a script to your package.json
 [↑ Back to top ↑](#swiss-docs)
 
 ## Command line options
-[↑ Back to top ↑](#swiss-docs)
 
 ### --src
 Alias: -s or -i

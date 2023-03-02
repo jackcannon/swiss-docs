@@ -30,11 +30,11 @@ const formatMainSegment = (segment: DocSegment, opts: CmdOptions): string => {
   // Body
   if (segment.body !== undefined) {
     output += '\n' + segment.body + '\n';
-  }
 
-  // Back to top
-  const backToTop = opts.rootId ? `\n[↑ Back to top ↑](#${opts.rootId})` : '';
-  output += backToTop;
+    // Back to top
+    const backToTop = opts.rootId ? `\n[↑ Back to top ↑](#${opts.rootId})` : '';
+    output += backToTop;
+  }
 
   return output;
 };
