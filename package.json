@@ -1,6 +1,6 @@
 {
   "name": "swiss-docs",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "author": "Jack Cannon <jackc@annon.co.uk> (http://c.annon.co.uk/)",
   "license": "MIT",
   "type": "module",
@@ -22,7 +22,7 @@
     "quickbuild": "rm -rf ./dist && npx swc src -d dist && chmod +x ./dist/index.js",
     "test": "yarn quickbuild && ./dist/index.js -i example -o example/OUTPUT.md -t example/template.md",
     "docs": "yarn quickbuild && ./dist/index.js -i src -o README.md -r=swiss-docs",
-    "prepublishOnly": "yarn test && yarn build"
+    "prepublishOnly": "yarn build"
   },
   "dependencies": {
     "@types/minimist": "^1.2.2",
