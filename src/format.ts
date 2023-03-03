@@ -14,7 +14,7 @@ export const formatTOC = (segments: DocSegment[], opts: CmdOptions): string => {
     return `${indent}- ${link}`;
   });
 
-  const firstLine = `  - [${opts.header || 'Table of Contents'}](#${opts.rootId || ''})`;
+  const firstLine = `  - [${opts.header || 'Table of Contents'}](#)`;
 
   const output = [firstLine, ...lines].join('\n');
 
@@ -32,7 +32,7 @@ const formatMainSegment = (segment: DocSegment, opts: CmdOptions): string => {
     output += '\n' + segment.body + '\n';
 
     // Back to top
-    const backToTop = opts.rootId ? `\n<p style="text-align: right" align="right"><a href="#${opts.rootId}"> [↑ Back to top ↑] </a></p>` : '';
+    const backToTop = `\n<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>`;
     output += backToTop;
   }
 

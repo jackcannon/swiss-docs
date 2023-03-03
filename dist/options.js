@@ -12,8 +12,7 @@ export var getOptions = function() {
         src: prefixCwd(args.src || args.s || args.i || args._[0] || cancel("No src folder provided")),
         output: prefixCwd(args.output || args.o || cancel("No output file provided")),
         template: prefixCwd(args.template || args.t || undefined),
-        header: args.header || args.h || undefined,
-        rootId: args.rootid || args.r || undefined
+        header: args.header || args.h || undefined
     };
     return options;
 };

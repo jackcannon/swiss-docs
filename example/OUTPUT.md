@@ -20,6 +20,7 @@ Middle
 # Intro
 Blah blah blah
 
+<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
 
 ### run
 this is the run function
@@ -31,10 +32,12 @@ const example = run('foo');
 @param {string} foo the foo
 @returns {string} the foo
 
+<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
 
 ## Sub folder A (higher priority)
 Should show above Sub Folder B
 
+<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
 
 ## Sub folder B
 
@@ -45,6 +48,7 @@ this logs it out
 subFunc('foo');
 ```
 
+<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
 
 <!-- DOCS: MAIN END -->
 

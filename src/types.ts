@@ -41,17 +41,6 @@ export interface CmdOptions {
    * Default: 'Table of Contents'
    */
   header: string;
-
-  /**<!-- DOCS: 2 ### -->
-   * --rootid
-   *
-   * Alias: -r
-   *
-   * The name of the root id that 'Back to Top' links will use
-   *
-   * Default: wont add a 'Back to Top' link
-   */
-  rootId: string;
 }
 
 export interface FoundComment {

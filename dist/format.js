@@ -36,7 +36,7 @@ export var formatTOC = function(segments, opts) {
         var link = "[".concat(title, "](#").concat(id, ")");
         return "".concat(indent, "- ").concat(link);
     });
-    var firstLine = "  - [".concat(opts.header || "Table of Contents", "](#").concat(opts.rootId || "", ")");
+    var firstLine = "  - [".concat(opts.header || "Table of Contents", "](#)");
     var output = [
         firstLine
     ].concat(_toConsumableArray(lines)).join("\n");
@@ -50,7 +50,7 @@ var formatMainSegment = function(segment, opts) {
     if (segment.body !== undefined) {
         output += "\n" + segment.body + "\n";
         // Back to top
-        var backToTop = opts.rootId ? '\n<p style="text-align: right" align="right"><a href="#'.concat(opts.rootId, '"> [↑ Back to top ↑] </a></p>') : "";
+        var backToTop = '\n<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>';
         output += backToTop;
     }
     return output;
