@@ -21,7 +21,7 @@
   "scripts": {
     "build": "rm -rf ./dist && npx swc src -d dist && chmod +x ./dist/index.js",
     "test": "yarn build && ./dist/index.js -i example -o example/OUTPUT.md -t example/template.md",
-    "docs": "yarn build && ./dist/index.js -i src -o README.md -r=swiss-docs",
+    "docs": "yarn build && ./dist/index.js -i src -o README.md",
     "prepublishOnly": "yarn build"
   },
   "dependencies": {
