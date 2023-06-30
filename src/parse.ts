@@ -11,7 +11,7 @@ const parseMeta = (comment: string, defaultPriority: number = 10000, defaultTitl
     };
   }
 
-  const priority = Number(metaContent.match(/[0-9.]{1,}/g)?.[0] ?? defaultPriority);
+  const priority = Number(metaContent.match(/[0-9.-]{1,}/g)?.[0] ?? defaultPriority);
   const titleLevel = (metaContent.match(/#+/g)?.[0] ?? '#'.repeat(defaultTitleLevel)).length;
 
   return {

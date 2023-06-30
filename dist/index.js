@@ -174,32 +174,7 @@ import { find } from "./find.js";
 import { parseComments } from "./parse.js";
 import { organise } from "./organise.js";
 import { exportAndSave } from "./export.js";
-/*<!-- DOCS: 1 ### -->
- * Setup
- */ /*<!-- DOCS: 1 ### -->
- * Install
- *
- * ```bash
- * yarn add -D swiss-docs
- * ```
- *
- * or
- *
- * ```bash
- * npm install --save-dev swiss-docs
- * ```
- */ /*<!-- DOCS: 1 ### -->
- * Add to scripts
- *
- * Add a script to your package.json
- *
- * ```json
- * {
- *  "scripts": {
- *   "docs": "swiss-docs -i src -o README.md"
- * }
- * ```
- */ var run = function() {
+var run = function() {
     var _ref = _asyncToGenerator(function() {
         var opts, foundComments, parsedComments, organised, e;
         return __generator(this, function(_state) {

@@ -875,10 +875,10 @@ strtok3@^7.0.0-alpha.9:
     "@tokenizer/token" "^0.3.0"
     peek-readable "^5.0.0"
 
-swiss-ak@^1.22.1:
-  version "1.22.1"
-  resolved "https://registry.yarnpkg.com/swiss-ak/-/swiss-ak-1.22.1.tgz#0d71ffffd25f475927101fae35629395c41643cf"
-  integrity sha512-JIUAeWRgG1aoAVazd8F09Qto/8bZWiq/Dbx4Cm4ZBEjYzZ0+razdVHItlVTt2w925XTZ9MyxYMDD+cirvVPARw==
+swiss-ak@^2.2.1:
+  version "2.2.1"
+  resolved "https://registry.yarnpkg.com/swiss-ak/-/swiss-ak-2.2.1.tgz#28ca05444c8032da4e2ea1a12fca27fb6d8e67e1"
+  integrity sha512-YoulvBY368krgNdWcCYry8BDSKk+95ydGVNTE6JysHbKfhDKSLlApoIBzLBiPtsIjCM3KpKbUIPZucMWMFMsGQ==
 
 to-regex-range@^5.0.1:
   version "5.0.1"

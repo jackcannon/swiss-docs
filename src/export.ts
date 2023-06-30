@@ -7,11 +7,14 @@ export const exportAndSave = async (segments: DocSegment[], opts: CmdOptions) =>
   const template = await fsP.readFile(opts.template || opts.output, 'utf8');
   let output = template;
 
+  // Don't output segments with a negative priority
+  const filteredSegments = segments.filter((segment) => segment.priority >= 0);
+
   const tags = [...template.match(/<!-- ?DOCS: ?(.*?) ?-->/g)].map((s) => s.replace(/<!-- ?DOCS: ?(.*?) ?-->/g, '$1').trim());
 
   const wantsTOC = tags.filter((tag) => tag.toUpperCase().includes('TOC')).length >= 2;
   if (wantsTOC) {
-    const toc = formatTOC(segments, opts);
+    const toc = formatTOC(filteredSegments, opts);
 
     const replacement = ['<!-- DOCS: TOC START -->', '', toc, '', '<!-- DOCS: TOC END -->'].join('\n');
 
@@ -20,7 +23,7 @@ export const exportAndSave = async (segments: DocSegment[], opts: CmdOptions) =>
 
   const wantsMain = tags.filter((tag) => tag.toUpperCase().includes('MAIN')).length >= 2;
   if (wantsMain) {
-    const main = formatMain(segments, opts);
+    const main = formatMain(filteredSegments, opts);
     const replacement = ['<!-- DOCS: MAIN START -->', '', main, '', '<!-- DOCS: MAIN END -->'].join('\n');
 
     output = output.replace(/<!-- ?DOCS: ?(START MAIN|MAIN START) ?-->(.|\n)*?<!-- ?DOCS: ?(END MAIN|MAIN END) ?-->/gi, replacement);

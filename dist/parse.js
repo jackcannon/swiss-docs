@@ -56,7 +56,7 @@ var parseMeta = function(comment) {
         };
     }
     var _metaContent_match_;
-    var priority = Number((_metaContent_match_ = (_metaContent_match = metaContent.match(/[0-9.]{1,}/g)) === null || _metaContent_match === void 0 ? void 0 : _metaContent_match[0]) !== null && _metaContent_match_ !== void 0 ? _metaContent_match_ : defaultPriority);
+    var priority = Number((_metaContent_match_ = (_metaContent_match = metaContent.match(/[0-9.-]{1,}/g)) === null || _metaContent_match === void 0 ? void 0 : _metaContent_match[0]) !== null && _metaContent_match_ !== void 0 ? _metaContent_match_ : defaultPriority);
     var _metaContent_match_1;
     var titleLevel = ((_metaContent_match_1 = (_metaContent_match1 = metaContent.match(/#+/g)) === null || _metaContent_match1 === void 0 ? void 0 : _metaContent_match1[0]) !== null && _metaContent_match_1 !== void 0 ? _metaContent_match_1 : "#".repeat(defaultTitleLevel)).length;
     return {

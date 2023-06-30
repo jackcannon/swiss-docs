@@ -7,35 +7,6 @@ import { organise } from './organise.js';
 import { formatMain } from './format.js';
 import { exportAndSave } from './export.js';
 
-/*<!-- DOCS: 1 ### -->
- * Setup
- */
-/*<!-- DOCS: 1 ### -->
- * Install
- *
- * ```bash
- * yarn add -D swiss-docs
- * ```
- *
- * or
- *
- * ```bash
- * npm install --save-dev swiss-docs
- * ```
- */
-/*<!-- DOCS: 1 ### -->
- * Add to scripts
- *
- * Add a script to your package.json
- *
- * ```json
- * {
- *  "scripts": {
- *   "docs": "swiss-docs -i src -o README.md"
- * }
- * ```
- */
-
 const run = async () => {
   try {
     const opts = getOptions();

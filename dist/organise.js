@@ -1,10 +1,10 @@
-import { ArrayUtils } from "swiss-ak";
+import { ArrayTools } from "swiss-ak";
 export var organise = function(comments) {
     // 'sort' by priority, maintaining original order for equal priorities
-    var groups = ArrayUtils.group(comments, function(c) {
+    var groups = ArrayTools.group(comments, function(c) {
         return c.priority;
     });
-    var sorted = ArrayUtils.sortByMapped(groups, function(g) {
+    var sorted = ArrayTools.sortByMapped(groups, function(g) {
         return g[0].priority;
     });
     // console.log(

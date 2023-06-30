@@ -23,10 +23,10 @@ function _unsupportedIterableToArray(o, minLen) {
     if (n === "Map" || n === "Set") return Array.from(n);
     if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen);
 }
-import { StringUtils } from "swiss-ak";
+import { StringTools } from "swiss-ak";
 var specialToken = "SUPERSECRETSPECIALCHARACTERFORSWISS123GOAWAYTHX";
 var getID = function(title) {
-    return StringUtils.toLowerSlugCase(title.replace(/[^A-Za-z0-9 ]/g, specialToken)).replaceAll(specialToken.toLowerCase(), "");
+    return StringTools.toLowerSlugCase(title.replace(/[^A-Za-z0-9 ]/g, specialToken)).replaceAll(specialToken.toLowerCase(), "");
 };
 export var formatTOC = function(segments, opts) {
     var lines = segments.map(function(param) {

@@ -27,6 +27,6 @@
   "dependencies": {
     "glob": "^9.1.2",
     "minimist": "^1.2.8",
-    "swiss-ak": "^1.22.1"
+    "swiss-ak": "^2.2.1"
   }
 }

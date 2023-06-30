@@ -182,7 +182,7 @@ var __generator = this && this.__generator || function(thisArg, body) {
 };
 import fsP from "fs/promises";
 import glob from "glob";
-import { ArrayUtils, PromiseUtils, fn, range } from "swiss-ak";
+import { ArrayTools, PromiseTools, fn, range } from "swiss-ak";
 var findFiles = function() {
     var _ref = _asyncToGenerator(function(directory) {
         var files;
@@ -234,7 +234,7 @@ var findCommentsInFile = function() {
                         return line.match(/\/\/ {0,}<!-- {0,}DOCS: ?(.*?) {0,}-->/g);
                     });
                     // sort them in a way so that the first one to match is the most recent (basically backwards)
-                    fileLevelDefinitions = ArrayUtils.sortByMapped(fileLevelDefinitions, function(param) {
+                    fileLevelDefinitions = ArrayTools.sortByMapped(fileLevelDefinitions, function(param) {
                         var _param = _slicedToArray(param, 1), index = _param[0];
                         return index;
                     }, fn.desc);
@@ -292,7 +292,7 @@ export var find = function() {
                     allFiles = _state.sent();
                     return [
                         4,
-                        PromiseUtils.mapLimit(16, allFiles, findCommentsInFile)
+                        PromiseTools.mapLimit(16, allFiles, findCommentsInFile)
                     ];
                 case 2:
                     allCommentsRaw = _state.sent();

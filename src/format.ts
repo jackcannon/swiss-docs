@@ -1,10 +1,10 @@
-import { StringUtils } from 'swiss-ak';
+import { StringTools } from 'swiss-ak';
 import { CmdOptions, DocSegment } from './types.js';
 
 const specialToken = 'SUPERSECRETSPECIALCHARACTERFORSWISS123GOAWAYTHX';
 
 const getID = (title: string) =>
-  StringUtils.toLowerSlugCase(title.replace(/[^A-Za-z0-9 ]/g, specialToken)).replaceAll(specialToken.toLowerCase(), '');
+  StringTools.toLowerSlugCase(title.replace(/[^A-Za-z0-9 ]/g, specialToken)).replaceAll(specialToken.toLowerCase(), '');
 
 export const formatTOC = (segments: DocSegment[], opts: CmdOptions): string => {
   const lines = segments.map(({ title, titleLevel }) => {

@@ -151,7 +151,7 @@ import fsP from "fs/promises";
 import { formatMain, formatTOC } from "./format.js";
 export var exportAndSave = function() {
     var _ref = _asyncToGenerator(function(segments, opts) {
-        var template, output, tags, wantsTOC, toc, replacement, wantsMain, main, replacement1;
+        var template, output, filteredSegments, tags, wantsTOC, toc, replacement, wantsMain, main, replacement1;
         return __generator(this, function(_state) {
             switch(_state.label){
                 case 0:
@@ -162,6 +162,9 @@ export var exportAndSave = function() {
                 case 1:
                     template = _state.sent();
                     output = template;
+                    filteredSegments = segments.filter(function(segment) {
+                        return segment.priority >= 0;
+                    });
                     tags = _toConsumableArray(template.match(/<!-- ?DOCS: ?(.*?) ?-->/g)).map(function(s) {
                         return s.replace(/<!-- ?DOCS: ?(.*?) ?-->/g, "$1").trim();
                     });
@@ -169,7 +172,7 @@ export var exportAndSave = function() {
                         return tag.toUpperCase().includes("TOC");
                     }).length >= 2;
                     if (wantsTOC) {
-                        toc = formatTOC(segments, opts);
+                        toc = formatTOC(filteredSegments, opts);
                         replacement = [
                             "<!-- DOCS: TOC START -->",
                             "",
@@ -183,7 +186,7 @@ export var exportAndSave = function() {
                         return tag.toUpperCase().includes("MAIN");
                     }).length >= 2;
                     if (wantsMain) {
-                        main = formatMain(segments, opts);
+                        main = formatMain(filteredSegments, opts);
                         replacement1 = [
                             "<!-- DOCS: MAIN START -->",
                             "",

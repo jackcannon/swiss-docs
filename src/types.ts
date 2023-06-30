@@ -44,6 +44,7 @@ export interface CmdOptions {
 }
 
 export interface FoundComment {
+  id?: string;
   fileLevelComment: string;
   file: string;
   comment: string;

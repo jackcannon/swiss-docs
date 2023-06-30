@@ -1,6 +1,6 @@
 import fsP from 'fs/promises';
 import glob from 'glob';
-import { ArrayUtils, PromiseUtils, fn, range } from 'swiss-ak';
+import { ArrayTools, PromiseTools, fn, range } from 'swiss-ak';
 import { FoundComment } from 'types.js';
 
 const findFiles = async (directory: string) => {
@@ -18,7 +18,7 @@ const findCommentsInFile = async (file: string): Promise<FoundComment[]> => {
     .map((line, index) => [index, line] as [number, string])
     .filter(([index, line]) => line.match(/\/\/ {0,}<!-- {0,}DOCS: ?(.*?) {0,}-->/g));
   // sort them in a way so that the first one to match is the most recent (basically backwards)
-  fileLevelDefinitions = ArrayUtils.sortByMapped(fileLevelDefinitions, ([index]) => index, fn.desc);
+  fileLevelDefinitions = ArrayTools.sortByMapped(fileLevelDefinitions, ([index]) => index, fn.desc);
 
   // find all javadoc comments
   const javadocComments = [...(text.match(/\/\*{1,3}(.|\n)*?\s\*\//g) || [])];
@@ -54,7 +54,7 @@ export const find = async (directory: string) => {
   const allFiles = await findFiles(directory);
 
   // find raw comments in all the files
-  const allCommentsRaw = await PromiseUtils.mapLimit(16, allFiles, findCommentsInFile);
+  const allCommentsRaw = await PromiseTools.mapLimit(16, allFiles, findCommentsInFile);
   const allComments = allCommentsRaw.flat();
 
   return allComments;
