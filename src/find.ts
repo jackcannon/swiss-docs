@@ -1,12 +1,8 @@
 import fsP from 'fs/promises';
-import glob from 'glob';
+
 import { ArrayTools, PromiseTools, fn, range } from 'swiss-ak';
 import { FoundComment } from 'types.js';
-
-const findFiles = async (directory: string) => {
-  const files = await glob(`${directory}/**/*.{js,ts,jsx,tsx,mjs,mts,mjsx,mtsx}`, { ignore: 'node_modules/**' });
-  return files;
-};
+import { findFiles } from './utils/fileFiles.js';
 
 const findCommentsInFile = async (file: string): Promise<FoundComment[]> => {
   const text = await fsP.readFile(file, 'utf8');
@@ -51,7 +47,7 @@ const findCommentsInFile = async (file: string): Promise<FoundComment[]> => {
 
 export const find = async (directory: string) => {
   // find all files
-  const allFiles = await findFiles(directory);
+  const allFiles = await findFiles(directory, 'js,ts,jsx,tsx,mjs,mts,mjsx,mtsx');
 
   // find raw comments in all the files
   const allCommentsRaw = await PromiseTools.mapLimit(16, allFiles, findCommentsInFile);

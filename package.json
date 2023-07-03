@@ -20,13 +20,15 @@
   },
   "scripts": {
     "build": "rm -rf ./dist && npx swc src -d dist && chmod +x ./dist/index.js",
-    "test": "yarn build && ./dist/index.js -i example -o example/OUTPUT.md -t example/template.md",
-    "docs": "yarn build && ./dist/index.js -i src -o README.md",
+    "test": "yarn test:prepare && yarn test:run",
+    "test:prepare": "yarn build && rm -rf ./example/alias && cp -r ./example/alias-src ./example/alias",
+    "test:run": "./dist/index.js -i example -o example/OUTPUT.md -t example/template.md -a example/alias",
     "prepublishOnly": "yarn build"
   },
   "dependencies": {
     "glob": "^9.1.2",
     "minimist": "^1.2.8",
-    "swiss-ak": "^2.2.1"
+    "swiss-ak": "^2.2.1",
+    "swiss-node": "^1.3.1"
   }
 }

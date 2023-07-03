@@ -174,6 +174,8 @@ import { find } from "./find.js";
 import { parseComments } from "./parse.js";
 import { organise } from "./organise.js";
 import { exportAndSave } from "./export.js";
+import { storeSegmentsInNameStore } from "./nameStore.js";
+import { runAlias } from "./alias.js";
 var run = function() {
     var _ref = _asyncToGenerator(function() {
         var opts, foundComments, parsedComments, organised, e;
@@ -182,9 +184,9 @@ var run = function() {
                 case 0:
                     _state.trys.push([
                         0,
-                        3,
+                        5,
                         ,
-                        4
+                        6
                     ]);
                     opts = getOptions();
                     console.log("");
@@ -201,6 +203,7 @@ var run = function() {
                 case 1:
                     foundComments = _state.sent();
                     parsedComments = parseComments(foundComments);
+                    storeSegmentsInNameStore(parsedComments);
                     organised = organise(parsedComments);
                     return [
                         4,
@@ -208,19 +211,31 @@ var run = function() {
                     ];
                 case 2:
                     _state.sent();
-                    return [
+                    if (!opts.alias) return [
                         3,
                         4
                     ];
+                    return [
+                        4,
+                        runAlias(opts)
+                    ];
                 case 3:
+                    _state.sent();
+                    _state.label = 4;
+                case 4:
+                    return [
+                        3,
+                        6
+                    ];
+                case 5:
                     e = _state.sent();
                     console.error(e);
                     process.exit(1);
                     return [
                         3,
-                        4
+                        6
                     ];
-                case 4:
+                case 6:
                     return [
                         2
                     ];

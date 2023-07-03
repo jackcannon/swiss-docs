@@ -181,11 +181,45 @@ var __generator = this && this.__generator || function(thisArg, body) {
     }
 };
 import fsP from "fs/promises";
-import { ArrayTools, PromiseTools, fn, range } from "swiss-ak";
 import { findFiles } from "./utils/fileFiles.js";
-var findCommentsInFile = function() {
+import { ArrayTools, MathsTools, PromiseTools } from "swiss-ak";
+import { warn } from "./utils/warn.js";
+import { getStoredSegment } from "./nameStore.js";
+export var runAlias = function() {
+    var _ref = _asyncToGenerator(function(options) {
+        var _ArrayTools, _MathsTools, _MathsTools1, files, stats, _zip_apply, changedCounts, unchangedCounts, changed, unchanged;
+        return __generator(this, function(_state) {
+            switch(_state.label){
+                case 0:
+                    return [
+                        4,
+                        findFiles(options.alias)
+                    ];
+                case 1:
+                    files = _state.sent();
+                    return [
+                        4,
+                        PromiseTools.mapLimit(16, files, replaceAliasesInFile)
+                    ];
+                case 2:
+                    stats = _state.sent();
+                    _zip_apply = _slicedToArray((_ArrayTools = ArrayTools).zip.apply(_ArrayTools, _toConsumableArray(stats)), 2), changedCounts = _zip_apply[0], unchangedCounts = _zip_apply[1];
+                    changed = (_MathsTools = MathsTools).addAll.apply(_MathsTools, _toConsumableArray(changedCounts || []));
+                    unchanged = (_MathsTools1 = MathsTools).addAll.apply(_MathsTools1, _toConsumableArray(unchangedCounts || []));
+                    if (changed > 0) console.log("Replaced ".concat(changed, " aliases"));
+                    if (unchanged > 0) warn("  WARNING: Unable to replace ".concat(unchanged, " aliases"));
+                    return [
+                        2
+                    ];
+            }
+        });
+    });
+    return function runAlias(options) {
+        return _ref.apply(this, arguments);
+    };
+}();
+var readFile = function() {
     var _ref = _asyncToGenerator(function(file) {
-        var text, lines, trimmedLines, fileLevelDefinitions, javadocComments, withMeta, founds;
         return __generator(this, function(_state) {
             switch(_state.label){
                 case 0:
@@ -194,92 +228,117 @@ var findCommentsInFile = function() {
                         fsP.readFile(file, "utf8")
                     ];
                 case 1:
-                    text = _state.sent();
-                    lines = text.split("\n");
-                    trimmedLines = text.split("\n").map(function(s) {
-                        return s.trim();
-                    });
-                    fileLevelDefinitions = lines.map(function(line, index) {
-                        return [
-                            index,
-                            line
-                        ];
-                    }).filter(function(param) {
-                        var _param = _slicedToArray(param, 2), index = _param[0], line = _param[1];
-                        return line.match(/\/\/ {0,}<!-- {0,}DOCS: ?(.*?) {0,}-->/g);
-                    });
-                    // sort them in a way so that the first one to match is the most recent (basically backwards)
-                    fileLevelDefinitions = ArrayTools.sortByMapped(fileLevelDefinitions, function(param) {
-                        var _param = _slicedToArray(param, 1), index = _param[0];
-                        return index;
-                    }, fn.desc);
-                    javadocComments = _toConsumableArray(text.match(/\/\*{1,3}(.|\n)*?\s\*\//g) || []);
-                    withMeta = javadocComments.filter(function(comment) {
-                        return comment.match(/<!-- ?DOCS: .*?-->/);
-                    });
-                    founds = withMeta.map(function(comment) {
-                        var fileLevelComment = "";
-                        if (fileLevelDefinitions.length) {
-                            var commentLines = comment.split("\n").map(function(s) {
-                                return s.trim();
-                            });
-                            var lineIndex = trimmedLines.findIndex(function(line, index) {
-                                return range(Math.min(3, commentLines.length)).every(function(i) {
-                                    return trimmedLines[index + i] === commentLines[i];
-                                });
-                            });
-                            var fileLevelDef = fileLevelDefinitions.find(function(param) {
-                                var _param = _slicedToArray(param, 1), index = _param[0];
-                                return index <= lineIndex;
-                            });
-                            if (fileLevelDef) {
-                                fileLevelComment = fileLevelDef[1];
-                            }
-                        }
-                        return {
-                            fileLevelComment: fileLevelComment,
-                            file: file,
-                            comment: comment
-                        };
-                    });
                     return [
                         2,
-                        founds
+                        _state.sent()
                     ];
             }
         });
     });
-    return function findCommentsInFile(file) {
+    return function readFile(file) {
         return _ref.apply(this, arguments);
     };
 }();
-export var find = function() {
-    var _ref = _asyncToGenerator(function(directory) {
-        var allFiles, allCommentsRaw, allComments;
+var writeFile = function() {
+    var _ref = _asyncToGenerator(function(file, newContents) {
         return __generator(this, function(_state) {
             switch(_state.label){
                 case 0:
                     return [
                         4,
-                        findFiles(directory, "js,ts,jsx,tsx,mjs,mts,mjsx,mtsx")
+                        fsP.writeFile(file, newContents, "utf8")
                     ];
                 case 1:
-                    allFiles = _state.sent();
+                    _state.sent();
                     return [
-                        4,
-                        PromiseTools.mapLimit(16, allFiles, findCommentsInFile)
-                    ];
-                case 2:
-                    allCommentsRaw = _state.sent();
-                    allComments = allCommentsRaw.flat();
-                    return [
-                        2,
-                        allComments
+                        2
                     ];
             }
         });
     });
-    return function find(directory) {
+    return function writeFile(file, newContents) {
+        return _ref.apply(this, arguments);
+    };
+}();
+var getNewComment = function(param) {
+    var commentText = param.commentText;
+    var _commentText_match;
+    var aliasName = (((_commentText_match = commentText.match(/<!-- ?DOCS-ALIAS: (.*?)-->/)) === null || _commentText_match === void 0 ? void 0 : _commentText_match[1]) || "").trim();
+    var segment = getStoredSegment(aliasName);
+    if (!segment) {
+        return;
+    }
+    var body = segment.body ? [
+        "",
+        ""
+    ].concat(_toConsumableArray((segment.body || "").split("\n"))).join("\n * ") : "";
+    var result = "/**<!-- DOCS-ALIAS: ".concat(aliasName, " -->\n * ").concat(segment.title).concat(Math.floor(Math.random() * 100000)).concat(body, "\n */");
+    return result;
+};
+var replaceComments = function(contents) {
+    var newContents = contents;
+    var changed = 0;
+    var unchanged = 0;
+    newContents = contents.replaceAll(/(?:^|\n)([ \t]*?)(?:(?:\/\*{1,3}((?:.|\n)*?)\s\*\/)|(?:\/\/\s?([^\n]*)))/g, function() {
+        for(var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++){
+            args[_key] = arguments[_key];
+        }
+        var _args = _slicedToArray(args, 4), fullMatch = _args[0], indent = _args[1], commentText1 = _args[2], commentText2 = _args[3];
+        var commentText = (commentText1 || commentText2 || "").trim();
+        if (commentText.match(/<!-- ?DOCS-ALIAS: (.*?)-->/)) {
+            var newComment = getNewComment({
+                fullMatch: fullMatch,
+                indent: indent,
+                commentText: commentText
+            });
+            if (newComment) {
+                changed++;
+                return [
+                    ""
+                ].concat(_toConsumableArray(newComment.split("\n"))).join("\n" + indent);
+            } else {
+                unchanged++;
+            }
+        }
+        // No change
+        return fullMatch;
+    });
+    return {
+        changed: changed,
+        unchanged: unchanged,
+        newContents: newContents
+    };
+};
+var replaceAliasesInFile = function() {
+    var _ref = _asyncToGenerator(function(file) {
+        var contents, _replaceComments, changed, unchanged, newContents;
+        return __generator(this, function(_state) {
+            switch(_state.label){
+                case 0:
+                    return [
+                        4,
+                        readFile(file)
+                    ];
+                case 1:
+                    contents = _state.sent();
+                    _replaceComments = replaceComments(contents), changed = _replaceComments.changed, unchanged = _replaceComments.unchanged, newContents = _replaceComments.newContents;
+                    return [
+                        4,
+                        writeFile(file, newContents)
+                    ];
+                case 2:
+                    _state.sent();
+                    return [
+                        2,
+                        [
+                            changed,
+                            unchanged
+                        ]
+                    ];
+            }
+        });
+    });
+    return function replaceAliasesInFile(file) {
         return _ref.apply(this, arguments);
     };
 }();

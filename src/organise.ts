@@ -6,10 +6,5 @@ export const organise = (comments: DocSegment[]) => {
   const groups = ArrayTools.group(comments, (c) => c.priority);
   const sorted = ArrayTools.sortByMapped(groups, (g) => g[0].priority);
 
-  // console.log(
-  //   'DEBUG',
-  //   sorted.map((g) => g.map(({ priority, title }) => ({ priority, title })))
-  // );
-
   return sorted.flat();
 };

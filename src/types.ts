@@ -41,6 +41,19 @@ export interface CmdOptions {
    * Default: 'Table of Contents'
    */
   header: string;
+
+  /**<!-- DOCS: 2 ### -->
+   * --alias
+   *
+   * Alias: -a
+   *
+   * Replace DOCS-ALIAS tags in the given file/dir with corresponding comments from the source
+   *
+   * If not given, no ALIAS tags will be replaced
+   *
+   * Default: false
+   */
+  alias: string;
 }
 
 export interface FoundComment {
@@ -53,6 +66,7 @@ export interface FoundComment {
 export interface DocSegment {
   priority: number;
   titleLevel: number;
+  name?: string;
   title: string;
   body: string;
 }

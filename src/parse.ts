@@ -11,11 +11,13 @@ const parseMeta = (comment: string, defaultPriority: number = 10000, defaultTitl
     };
   }
 
-  const priority = Number(metaContent.match(/[0-9.-]{1,}/g)?.[0] ?? defaultPriority);
+  const name = metaContent.match(/(^|\s)[A-Za-z-_.]+(\s|$)/g)?.[0].trim() || undefined;
+  const priority = Number(metaContent.match(/-?[0-9]{1,}([.][0-9]{1,})?/g)?.[0] ?? defaultPriority);
   const titleLevel = (metaContent.match(/#+/g)?.[0] ?? '#'.repeat(defaultTitleLevel)).length;
 
   return {
     fullMeta,
+    name,
     priority,
     titleLevel
   };
@@ -32,7 +34,7 @@ const parseComment = ({ fileLevelComment, comment }: FoundComment): DocSegment =
   }
 
   // parse the metadata
-  const { fullMeta, priority, titleLevel } = parseMeta(comment, filePriority, fileTitleLevel);
+  const { fullMeta, name, priority, titleLevel } = parseMeta(comment, filePriority, fileTitleLevel);
 
   // parse the content
   const withoutMeta = comment.replace(fullMeta, '');
@@ -42,21 +44,8 @@ const parseComment = ({ fileLevelComment, comment }: FoundComment): DocSegment =
     .replace(/^\n/g, '');
   const [title, body] = content.split(/\n(.*)/s).map((s) => s.trim());
 
-  // if (title === 'update') {
-  //   console.log('DEBUG', {
-  //     fileLevelComment,
-  //     comment,
-  //     filePriority,
-  //     fileTitleLevel,
-  //     fullMeta,
-  //     priority,
-  //     titleLevel,
-  //     title,
-  //     body
-  //   });
-  // }
-
   return {
+    name,
     priority,
     titleLevel,
     title,

@@ -6,6 +6,8 @@ import { parseComments } from './parse.js';
 import { organise } from './organise.js';
 import { formatMain } from './format.js';
 import { exportAndSave } from './export.js';
+import { storeSegmentsInNameStore } from './nameStore.js';
+import { runAlias } from './alias.js';
 
 const run = async () => {
   try {
@@ -19,9 +21,15 @@ const run = async () => {
     const foundComments = await find(opts.src);
     const parsedComments = parseComments(foundComments);
 
+    storeSegmentsInNameStore(parsedComments);
+
     const organised = organise(parsedComments);
 
     await exportAndSave(organised, opts);
+
+    if (opts.alias) {
+      await runAlias(opts);
+    }
   } catch (e) {
     console.error(e);
     process.exit(1);

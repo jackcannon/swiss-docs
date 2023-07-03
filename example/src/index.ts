@@ -6,7 +6,7 @@ import { subFunc } from './folder/sub.js';
  * Blah blah blah
  */
 
-/**<!-- DOCS: ### 1 -->
+/**<!-- DOCS: main-run ### 1 -->
  * run
  *
  * this is the run function
