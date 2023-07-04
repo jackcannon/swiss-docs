@@ -54,7 +54,7 @@ const replaceComments = (contents: string): { changed: number; unchanged: number
   let changed = 0;
   let unchanged = 0;
 
-  newContents = contents.replaceAll(/(?:^|\n)([ \t]*?)(?:(?:\/\*{1,3}((?:.|\n)*?)\s\*\/)|(?:\/\/\s?([^\n]*)))/g, (...args) => {
+  newContents = contents.replaceAll(/(?:^|\n)([ \t]*?)(?:(?:\/\*{1,3}((?:.|\n)*?)\s?\*\/)|(?:\/\/\s?([^\n]*)))/g, (...args) => {
     const [fullMatch, indent, commentText1, commentText2] = args;
     const commentText = (commentText1 || commentText2 || '').trim();
 
@@ -63,7 +63,8 @@ const replaceComments = (contents: string): { changed: number; unchanged: number
 
       if (newComment) {
         changed++;
-        return ['', ...newComment.split('\n')].join('\n' + indent);
+        const result = ['', ...newComment.split('\n')].join('\n' + indent);
+        return result;
       } else {
         unchanged++;
       }

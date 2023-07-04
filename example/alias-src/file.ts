@@ -14,4 +14,7 @@
    * Already Has something here
    */
   const subFunc3 = (foo: string) => {};
+
+  /**<!-- DOCS-ALIAS: subFunc-Alias_T.est -->*/
+  const subFunc4 = (foo: string) => {};
 }

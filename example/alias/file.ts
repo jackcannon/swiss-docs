@@ -1,6 +1,6 @@
 {
   /**<!-- DOCS-ALIAS: main-run -->
-   * run73313
+   * run
    * 
    * this is the run function
    * 
@@ -14,7 +14,7 @@
   const run = (foo: string) => {};
 
   /**<!-- DOCS-ALIAS: subFunc-Alias_T.est -->
-   * subFunc8804
+   * subFunc
    * 
    * this logs it out
    * 
@@ -30,7 +30,7 @@
   const subFunc2 = (foo: string) => {};
 
   /**<!-- DOCS-ALIAS: subFunc-Alias_T.est -->
-   * subFunc9959
+   * subFunc
    * 
    * this logs it out
    * 
@@ -39,4 +39,15 @@
    * ```
    */
   const subFunc3 = (foo: string) => {};
+
+  /**<!-- DOCS-ALIAS: subFunc-Alias_T.est -->
+   * subFunc
+   * 
+   * this logs it out
+   * 
+   * ```ts
+   * subFunc('foo');
+   * ```
+   */
+  const subFunc4 = (foo: string) => {};
 }

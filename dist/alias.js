@@ -272,19 +272,22 @@ var getNewComment = function(param) {
         "",
         ""
     ].concat(_toConsumableArray((segment.body || "").split("\n"))).join("\n * ") : "";
-    var result = "/**<!-- DOCS-ALIAS: ".concat(aliasName, " -->\n * ").concat(segment.title).concat(Math.floor(Math.random() * 100000)).concat(body, "\n */");
+    var result = "/**<!-- DOCS-ALIAS: ".concat(aliasName, " -->\n * ").concat(segment.title).concat(body, "\n */");
     return result;
 };
 var replaceComments = function(contents) {
     var newContents = contents;
     var changed = 0;
     var unchanged = 0;
-    newContents = contents.replaceAll(/(?:^|\n)([ \t]*?)(?:(?:\/\*{1,3}((?:.|\n)*?)\s\*\/)|(?:\/\/\s?([^\n]*)))/g, function() {
+    newContents = contents.replaceAll(/(?:^|\n)([ \t]*?)(?:(?:\/\*{1,3}((?:.|\n)*?)\s?\*\/)|(?:\/\/\s?([^\n]*)))/g, function() {
         for(var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++){
             args[_key] = arguments[_key];
         }
         var _args = _slicedToArray(args, 4), fullMatch = _args[0], indent = _args[1], commentText1 = _args[2], commentText2 = _args[3];
         var commentText = (commentText1 || commentText2 || "").trim();
+        console.log({
+            fullMatch: fullMatch
+        });
         if (commentText.match(/<!-- ?DOCS-ALIAS: (.*?)-->/)) {
             var newComment = getNewComment({
                 fullMatch: fullMatch,
@@ -293,9 +296,11 @@ var replaceComments = function(contents) {
             });
             if (newComment) {
                 changed++;
-                return [
+                var result = [
                     ""
                 ].concat(_toConsumableArray(newComment.split("\n"))).join("\n" + indent);
+                // console.log({ fullMatch, result });
+                return result;
             } else {
                 unchanged++;
             }
