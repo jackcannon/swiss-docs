@@ -285,9 +285,6 @@ var replaceComments = function(contents) {
         }
         var _args = _slicedToArray(args, 4), fullMatch = _args[0], indent = _args[1], commentText1 = _args[2], commentText2 = _args[3];
         var commentText = (commentText1 || commentText2 || "").trim();
-        console.log({
-            fullMatch: fullMatch
-        });
         if (commentText.match(/<!-- ?DOCS-ALIAS: (.*?)-->/)) {
             var newComment = getNewComment({
                 fullMatch: fullMatch,
@@ -299,7 +296,6 @@ var replaceComments = function(contents) {
                 var result = [
                     ""
                 ].concat(_toConsumableArray(newComment.split("\n"))).join("\n" + indent);
-                // console.log({ fullMatch, result });
                 return result;
             } else {
                 unchanged++;
