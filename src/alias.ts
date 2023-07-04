@@ -2,8 +2,8 @@ import fsP from 'fs/promises';
 
 import { CmdOptions } from './types.js';
 import { findFiles } from './utils/fileFiles.js';
-import { ArrayTools, MathsTools, PromiseTools } from 'swiss-ak';
-import { warn } from './utils/warn.js';
+import { ArrayTools, MathsTools, PromiseTools, symbols } from 'swiss-ak';
+import { success, warn } from './utils/logs.js';
 import { getStoredSegment } from './nameStore.js';
 
 export const runAlias = async (options: CmdOptions) => {
@@ -14,8 +14,13 @@ export const runAlias = async (options: CmdOptions) => {
   const changed = MathsTools.addAll(...(changedCounts || []));
   const unchanged = MathsTools.addAll(...(unchangedCounts || []));
 
-  if (changed > 0) console.log(`Replaced ${changed} aliases`);
-  if (unchanged > 0) warn(`  WARNING: Unable to replace ${unchanged} aliases`);
+  if (unchanged > 0) {
+    console.log();
+    warn(`WARNING: Unable to replace ${unchanged} aliases\n`);
+  }
+  if (changed > 0) success(`${symbols.TICK} Replaced ${changed} aliases\n`);
+
+  // if (changed > 0 || unchanged > 0) console.log();
 };
 
 const readFile = async (file: string): Promise<string> => {
@@ -37,6 +42,7 @@ const getNewComment = ({ commentText }: CommentInfo): string => {
   const segment = getStoredSegment(aliasName);
 
   if (!segment) {
+    warn(`WARNING: Unable to find docs for '${aliasName}'`);
     return;
   }
 

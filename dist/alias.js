@@ -182,8 +182,8 @@ var __generator = this && this.__generator || function(thisArg, body) {
 };
 import fsP from "fs/promises";
 import { findFiles } from "./utils/fileFiles.js";
-import { ArrayTools, MathsTools, PromiseTools } from "swiss-ak";
-import { warn } from "./utils/warn.js";
+import { ArrayTools, MathsTools, PromiseTools, symbols } from "swiss-ak";
+import { success, warn } from "./utils/logs.js";
 import { getStoredSegment } from "./nameStore.js";
 export var runAlias = function() {
     var _ref = _asyncToGenerator(function(options) {
@@ -206,13 +206,17 @@ export var runAlias = function() {
                     _zip_apply = _slicedToArray((_ArrayTools = ArrayTools).zip.apply(_ArrayTools, _toConsumableArray(stats)), 2), changedCounts = _zip_apply[0], unchangedCounts = _zip_apply[1];
                     changed = (_MathsTools = MathsTools).addAll.apply(_MathsTools, _toConsumableArray(changedCounts || []));
                     unchanged = (_MathsTools1 = MathsTools).addAll.apply(_MathsTools1, _toConsumableArray(unchangedCounts || []));
-                    if (changed > 0) console.log("Replaced ".concat(changed, " aliases"));
-                    if (unchanged > 0) warn("  WARNING: Unable to replace ".concat(unchanged, " aliases"));
+                    if (unchanged > 0) {
+                        console.log();
+                        warn("WARNING: Unable to replace ".concat(unchanged, " aliases\n"));
+                    }
+                    if (changed > 0) success("".concat(symbols.TICK, " Replaced ").concat(changed, " aliases\n"));
                     return [
                         2
                     ];
             }
         });
+    // if (changed > 0 || unchanged > 0) console.log();
     });
     return function runAlias(options) {
         return _ref.apply(this, arguments);
@@ -266,6 +270,7 @@ var getNewComment = function(param) {
     var aliasName = (((_commentText_match = commentText.match(/<!-- ?DOCS-ALIAS: (.*?)-->/)) === null || _commentText_match === void 0 ? void 0 : _commentText_match[1]) || "").trim();
     var segment = getStoredSegment(aliasName);
     if (!segment) {
+        warn("WARNING: Unable to find docs for '".concat(aliasName, "'"));
         return;
     }
     var body = segment.body ? [
