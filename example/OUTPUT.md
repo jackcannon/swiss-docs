@@ -29,8 +29,13 @@ this is the run function
 const example = run('foo');
 ```
 
-@param {string} foo the foo
-@returns {string} the foo
+|  #  | Parameter Name | Required | Type     |
+|:---:|:---------------|:---------|:---------|
+| *0* | `foo`          | **Yes**  | `string` |
+
+| Return Type |
+|-------------|
+| `string`    |
 
 <p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
 
@@ -47,6 +52,14 @@ this logs it out
 ```ts
 subFunc('foo');
 ```
+
+|  #  | Parameter Name | Required | Type     |
+|:---:|:---------------|:---------|:---------|
+| *0* | `foo`          | **Yes**  | `string` |
+
+| Return Type |
+|-------------|
+| `void`      |
 
 <p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
 

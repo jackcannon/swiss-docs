@@ -1,4 +1,4 @@
-/**<!-- DOCS: ## 3 -->
+/*<!-- DOCS: ## 3 -->
  * Sub folder B
  */
 
@@ -17,7 +17,7 @@ export const subFunc = (foo: string) => {
   console.log(foo + 'bar');
 };
 
-/**<!-- DOCS: -1 -->
+/*<!-- DOCS: -1 -->
  * IGNORE ME
  *
  * Don't show me in the README, but visible elsewhere, and can be used with DOCS-ALIAS
@@ -25,7 +25,7 @@ export const subFunc = (foo: string) => {
 
 //<!-- DOCS: 2 -->
 
-/**<!-- DOCS: ## -->
+/*<!-- DOCS: ## -->
  * Sub folder A (higher priority)
  *
  * Should show above Sub Folder B

@@ -17,6 +17,8 @@ export interface CmdOptions {
    * Alias: -o
    *
    * The output file to write the markdown to
+   *
+   * If not given, the markdown will not be exported.
    */
   output: string;
 
@@ -54,6 +56,19 @@ export interface CmdOptions {
    * Default: false
    */
   alias: string;
+
+  /**<!-- DOCS: 2 ### -->
+   * --jsdoc
+   *
+   * Alias: -j
+   *
+   * Update the JSDoc @ tags in the src files before running the docs.
+   *
+   * > Note: this will make changes to the original source files
+   *
+   * Default: false
+   */
+  jsdoc: boolean;
 }
 
 export interface FoundComment {
@@ -63,10 +78,31 @@ export interface FoundComment {
   comment: string;
 }
 
+export interface JSDocParam {
+  name: string;
+  type?: string;
+  isOptional: boolean;
+  isRestParam: boolean;
+  defaultValue?: string;
+  comment?: string;
+}
+export interface JSDocReturns {
+  type?: string;
+  comment?: string;
+}
+export interface JSDocInfo {
+  allTags: string[];
+  params?: JSDocParam[];
+  returns?: JSDocReturns;
+}
+
 export interface DocSegment {
   priority: number;
   titleLevel: number;
   name?: string;
   title: string;
   body: string;
+  jsdoc: JSDocInfo;
 }
+
+export type CombinedComment = FoundComment & DocSegment;

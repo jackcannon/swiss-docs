@@ -14,10 +14,11 @@ export const getOptions = (): CmdOptions => {
 
   const options: CmdOptions = {
     src: prefixCwd(args.src || args.s || args.i || args._[0] || cancel('No src folder provided')),
-    output: prefixCwd(args.output || args.o || cancel('No output file provided')),
+    output: prefixCwd(args.output || args.o || undefined),
     template: prefixCwd(args.template || args.t || undefined),
     header: args.header || args.h || undefined,
-    alias: prefixCwd(args.alias || args.a || undefined)
+    alias: prefixCwd(args.alias || args.a || undefined),
+    jsdoc: Boolean(args.jsdoc || args.j || undefined)
   };
 
   return options;

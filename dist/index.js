@@ -170,12 +170,27 @@ var __generator = this && this.__generator || function(thisArg, body) {
     }
 };
 import { getOptions } from "./options.js";
-import { find } from "./find.js";
+import { findAllComments } from "./find.js";
 import { parseComments } from "./parse.js";
 import { organise } from "./organise.js";
-import { exportAndSave } from "./export.js";
+import { exportAndSave } from "./exportMarkdown.js";
 import { storeSegmentsInNameStore } from "./nameStore.js";
 import { runAlias } from "./alias.js";
+import { runJSDocUpdate } from "./jsdoc.js";
+var getValueDisplay = function(value) {
+    if (value === undefined) return "\x1b[90m[none]\x1b[39m";
+    if (value === true) return "\x1b[32mtrue\x1b[39m";
+    if (value === false) return "\x1b[90mfalse\x1b[39m";
+    return value;
+};
+var printOptions = function(opts) {
+    console.log("Running \x1b[1mswiss-docs\x1b[22m with options:");
+    Object.entries(opts).forEach(function(param) {
+        var _param = _slicedToArray(param, 2), key = _param[0], value = _param[1];
+        return console.log(" - ".concat(key, ": ").concat(getValueDisplay(value)));
+    });
+    console.log("");
+};
 var run = function() {
     var _ref = _asyncToGenerator(function() {
         var opts, foundComments, parsedComments, organised, e;
@@ -184,58 +199,71 @@ var run = function() {
                 case 0:
                     _state.trys.push([
                         0,
-                        5,
+                        8,
                         ,
-                        6
+                        9
                     ]);
                     opts = getOptions();
                     console.log("");
-                    console.log("Running \x1b[1mswiss-docs\x1b[22m with options:");
-                    Object.entries(opts).forEach(function(param) {
-                        var _param = _slicedToArray(param, 2), key = _param[0], value = _param[1];
-                        return console.log(" - ".concat(key, ": ").concat(value !== null && value !== void 0 ? value : "\x1b[90m[none]\x1b[39m"));
-                    });
-                    console.log("");
+                    printOptions(opts);
+                    if (!opts.jsdoc) return [
+                        3,
+                        2
+                    ];
                     return [
                         4,
-                        find(opts.src)
+                        runJSDocUpdate(opts)
                     ];
                 case 1:
+                    _state.sent();
+                    _state.label = 2;
+                case 2:
+                    return [
+                        4,
+                        findAllComments(opts)
+                    ];
+                case 3:
                     foundComments = _state.sent();
                     parsedComments = parseComments(foundComments);
                     storeSegmentsInNameStore(parsedComments);
                     organised = organise(parsedComments);
+                    if (!opts.output) return [
+                        3,
+                        5
+                    ];
                     return [
                         4,
                         exportAndSave(organised, opts)
                     ];
-                case 2:
+                case 4:
                     _state.sent();
+                    _state.label = 5;
+                case 5:
                     if (!opts.alias) return [
                         3,
-                        4
+                        7
                     ];
                     return [
                         4,
                         runAlias(opts)
                     ];
-                case 3:
+                case 6:
                     _state.sent();
-                    _state.label = 4;
-                case 4:
+                    _state.label = 7;
+                case 7:
                     return [
                         3,
-                        6
+                        9
                     ];
-                case 5:
+                case 8:
                     e = _state.sent();
                     console.error(e);
                     process.exit(1);
                     return [
                         3,
-                        6
+                        9
                     ];
-                case 6:
+                case 9:
                     return [
                         2
                     ];

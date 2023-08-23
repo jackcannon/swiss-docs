@@ -1,6 +1,6 @@
 import fsP from 'fs/promises';
 
-import { formatMain, formatTOC } from './format.js';
+import { formatMain, formatTOC } from './formatMarkdown.js';
 import { CmdOptions, DocSegment } from './types.js';
 
 export const exportAndSave = async (segments: DocSegment[], opts: CmdOptions) => {

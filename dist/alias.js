@@ -181,7 +181,7 @@ var __generator = this && this.__generator || function(thisArg, body) {
     }
 };
 import fsP from "fs/promises";
-import { findFiles } from "./utils/fileFiles.js";
+import { findFiles } from "./utils/findFiles.js";
 import { ArrayTools, MathsTools, PromiseTools, symbols } from "swiss-ak";
 import { success, warn } from "./utils/logs.js";
 import { getStoredSegment } from "./nameStore.js";

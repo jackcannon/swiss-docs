@@ -1,12 +1,14 @@
 import fsP from 'fs/promises';
 
 import { ArrayTools, PromiseTools, fn, range } from 'swiss-ak';
-import { FoundComment } from 'types.js';
-import { findFiles } from './utils/fileFiles.js';
+import { CmdOptions, FoundComment } from 'types.js';
+import { findFiles } from './utils/findFiles.js';
 
 const findCommentsInFile = async (file: string): Promise<FoundComment[]> => {
   const text = await fsP.readFile(file, 'utf8');
-
+  return findCommentsInText(text, file);
+};
+export const findCommentsInText = async (text: string, file: string): Promise<FoundComment[]> => {
   const lines = text.split('\n');
   const trimmedLines = text.split('\n').map((s) => s.trim());
 
@@ -45,9 +47,13 @@ const findCommentsInFile = async (file: string): Promise<FoundComment[]> => {
   return founds;
 };
 
-export const find = async (directory: string) => {
+export const findSrcFiles = async (opts: CmdOptions) => {
+  return await findFiles(opts.src, 'js,ts,jsx,tsx,mjs,mts,mjsx,mtsx');
+};
+
+export const findAllComments = async (opts: CmdOptions) => {
   // find all files
-  const allFiles = await findFiles(directory, 'js,ts,jsx,tsx,mjs,mts,mjsx,mtsx');
+  const allFiles = await findSrcFiles(opts);
 
   // find raw comments in all the files
   const allCommentsRaw = await PromiseTools.mapLimit(16, allFiles, findCommentsInFile);

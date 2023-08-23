@@ -1,24 +1,26 @@
 # swiss-docs
 
-- [Table of Contents](#)
-  - [Setup](#setup)
-  - [Install](#install)
-  - [Add to scripts](#add-to-scripts)
+- [swiss-docs](#swiss-docs)
+    - [Setup](#setup)
+    - [Install](#install)
+    - [Add to scripts](#add-to-scripts)
   - [Syntax](#syntax)
     - [Values](#values)
       - [Name](#name)
       - [Header depth](#header-depth)
       - [Priority Level](#priority-level)
-  - [Definitions](#definitions)
-    - [README](#readme)
-    - [File level](#file-level)
-    - [Comment level](#comment-level)
-    - [Aliases](#aliases)
+    - [Definitions](#definitions)
+      - [README](#readme)
+      - [File level](#file-level)
+      - [Comment level](#comment-level)
+      - [Aliases](#aliases)
   - [Command line options](#command-line-options)
-    - [--src](#src)
-    - [--output](#output)
-    - [--template](#template)
-    - [--header](#header)
+    - [--src](#--src)
+    - [--output](#--output)
+    - [--template](#--template)
+    - [--header](#--header)
+    - [--jsdoc](#--jsdoc)
+      - [Problems with some JSDoc comments not being updated](#problems-with-some-jsdoc-comments-not-being-updated)
 
 Here are the docs
 
@@ -228,7 +230,80 @@ Alias: -h
 
 The name to use at the top of the table of contents
 
-Default: 'Table of Contents'
+Default: false
+
+<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
+
+### --jsdoc
+
+Alias: -j
+
+Update the JSDoc @ tags in the src files before running the docs.
+
+> Note: this will make changes to the original source files
+
+> Note: As each file is transpiled and processed by an external library, this can be very slow
+
+#### Problems with some JSDoc comments not being updated
+
+To add/update the JSDoc tags, each file is transpiled with the `ts-to-jsdoc` library (a custom fork called [`@jackcannon/ts-to-jsdoc`](https://www.npmjs.com/package/@jackcannon/ts-to-jsdoc)), and the result scanned to obtain updated comments to replace the originals with.
+
+This library only seems to handle top-level functions, so the files are pre-processed before the transpile stage to remove any lines that take JSDoc-able sections out of the scope of the library (notably namespaces). These removable sections are indicated by comments in the code.
+
+So this file:
+
+```typescript
+'line 1';
+
+// SWISS-DOCS-JSDOC-REMOVE-START
+'REMOVE ME';
+// SWISS-DOCS-JSDOC-REMOVE-END
+
+'line 2';
+
+// SWISS-DOCS-JSDOC-REMOVE-NEXT-LINE
+'REMOVE ME';
+
+'line 3';
+
+'REMOVE ME'; // SWISS-DOCS-JSDOC-REMOVE-THIS-LINE
+
+'line 4';
+
+'REMOVE ME';
+// SWISS-DOCS-JSDOC-REMOVE-PREV-LINE
+
+'line 5';
+
+export namespace Example {
+  // SWISS-DOCS-JSDOC-REMOVE-PREV-LINE
+  /**
+   * A JSDoc comment
+   */
+  export const aFunc = (param: string): number => 1;
+} // SWISS-DOCS-JSDOC-REMOVE-THIS-LINE
+```
+
+gets passed to ts-to-jsdoc as:
+
+```typescript
+'line 1';
+
+'line 2';
+
+'line 3';
+
+'line 4';
+
+'line 5';
+
+/**
+ * A JSDoc comment
+ */
+export const aFunc = (param: string): number => 1;
+```
+
+Default: false
 
 <p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
 

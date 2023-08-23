@@ -148,7 +148,7 @@ var __generator = this && this.__generator || function(thisArg, body) {
     }
 };
 import fsP from "fs/promises";
-import { formatMain, formatTOC } from "./format.js";
+import { formatMain, formatTOC } from "./formatMarkdown.js";
 export var exportAndSave = function() {
     var _ref = _asyncToGenerator(function(segments, opts) {
         var template, output, filteredSegments, tags, wantsTOC, toc, replacement, wantsMain, main, replacement1;
