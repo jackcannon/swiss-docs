@@ -2,7 +2,7 @@
 
 import { getOptions } from './options.js';
 import { findAllComments } from './find.js';
-import { parseComments } from './parse.js';
+import { parseComments } from './parseComment.js';
 import { organise } from './organise.js';
 import { exportAndSave } from './exportMarkdown.js';
 import { storeSegmentsInNameStore } from './nameStore.js';

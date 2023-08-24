@@ -47,8 +47,9 @@ const getNewComment = ({ commentText }: CommentInfo): string => {
   }
 
   const body = segment.body ? ['', '', ...(segment.body || '').split('\n')].join('\n * ') : '';
+  const jsdocTags = segment.jsdoc?.allTags?.length ? ['', ...(segment.jsdoc.allTags || '')].join('\n * ') : '';
   const result = `/**<!-- DOCS-ALIAS: ${aliasName} -->
- * ${segment.title}${body}
+ * ${segment.title}${body}${jsdocTags}
  */`;
 
   return result;

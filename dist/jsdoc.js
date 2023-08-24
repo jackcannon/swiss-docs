@@ -199,7 +199,7 @@ var __generator = this && this.__generator || function(thisArg, body) {
 import fsP from "fs/promises";
 import { PromiseTools, getProgressBar } from "swiss-ak";
 import transpile from "ts-to-jsdoc";
-import { parseComments } from "./parse.js";
+import { parseComments } from "./parseComment.js";
 import { findCommentsInText, findSrcFiles } from "./find.js";
 import { warn } from "./utils/logs.js";
 export var runJSDocUpdate = function() {

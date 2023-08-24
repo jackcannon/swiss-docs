@@ -56,7 +56,7 @@ function _unsupportedIterableToArray(o, minLen) {
     if (n === "Map" || n === "Set") return Array.from(n);
     if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen);
 }
-import { ObjectTools, fn } from "swiss-ak";
+import { parseJSDocTags } from "./parseJSDoc.js";
 var parseMeta = function(comment) {
     var defaultPriority = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : 10000, defaultTitleLevel = arguments.length > 2 && arguments[2] !== void 0 ? arguments[2] : 0;
     var _metaContent_match, _metaContent_match1, _metaContent_match2;
@@ -80,72 +80,6 @@ var parseMeta = function(comment) {
         titleLevel: titleLevel
     };
 };
-var parseJSDocTags = function(jsdocTags) {
-    var params = jsdocTags.filter(function(tag) {
-        return tag.startsWith("@param") || tag.startsWith("@arg ") || tag.startsWith("@argument");
-    }).map(function(tag) {
-        var _tag_match;
-        var typeRaw = ((_tag_match = tag.match(/\{.*\}/)) === null || _tag_match === void 0 ? void 0 : _tag_match[0]) || "";
-        var type = typeRaw.slice(1, -1) || undefined;
-        var withoutTag = tag.replace(/\s*@\S+/, "").trim();
-        var withoutType = withoutTag.replace(typeRaw, "").trim();
-        var words;
-        var name;
-        var isOptional = false;
-        var defaultValue;
-        if (withoutType.startsWith("[") && withoutType.includes("]")) {
-            var _withoutType_match;
-            isOptional = true;
-            var nameRaw = (_withoutType_match = withoutType.match(/\[.*\]/)) === null || _withoutType_match === void 0 ? void 0 : _withoutType_match[0];
-            var withoutName = withoutType.replace(nameRaw, "").trim();
-            words = withoutName.split(" ").filter(fn.isTruthy);
-            nameRaw = nameRaw.slice(1, -1);
-            var nameSplit = nameRaw.split("=");
-            defaultValue = nameSplit.slice(1).join("=");
-            name = nameSplit[0];
-        } else {
-            words = withoutType.split(" ").filter(fn.isTruthy);
-            name = words.splice(0, 1)[0] || "";
-        }
-        if (!name) return undefined;
-        var isRestParam = (type === null || type === void 0 ? void 0 : type.startsWith("...")) || false;
-        var comment = words.slice(words[0] === "-" ? 1 : 0).join(" ") || undefined;
-        var result = ObjectTools.clean({
-            name: name,
-            type: type,
-            isOptional: isOptional,
-            isRestParam: isRestParam,
-            defaultValue: defaultValue,
-            comment: comment
-        });
-        return result;
-    }).filter(fn.isTruthy);
-    var returns = function() {
-        var _withoutTag_match;
-        var tag = jsdocTags.find(function(tag) {
-            return tag.startsWith("@return");
-        });
-        if (!tag) return undefined;
-        var withoutTag = tag.replace(/\s*@\S+/, "").trim();
-        var typeRaw = ((_withoutTag_match = withoutTag.match(/\{.*\}/)) === null || _withoutTag_match === void 0 ? void 0 : _withoutTag_match[0]) || "";
-        var type = typeRaw.slice(1, -1) || undefined;
-        var withoutType = withoutTag.replace(typeRaw, "").trim();
-        var words = _toConsumableArray(withoutType.split(" ").slice(1)).concat([
-            ""
-        ]);
-        var comment = words.slice(words[0] === "-" ? 1 : 0).join(" ").trim() || undefined;
-        return ObjectTools.clean({
-            type: type,
-            comment: comment
-        });
-    }();
-    var jsdoc = ObjectTools.clean({
-        allTags: jsdocTags,
-        params: params.length ? params : undefined,
-        returns: returns
-    });
-    return jsdoc;
-};
 var parseComment = function(param) {
     var fileLevelComment = param.fileLevelComment, comment = param.comment;
     var filePriority = undefined;
@@ -168,6 +102,12 @@ var parseComment = function(param) {
     // Find and remove the jsdoc tags
     var jsdocTags = (bodyRaw.match(/(^|\n)@[A-Za-z].*/g) || []).map(function(line) {
         return line.trim();
+    }).map(function(tag) {
+        // Clean tags
+        var edited = tag;
+        // Remove any import() statements that have been added
+        edited = edited.replaceAll(/import\(.*?\)\./g, "");
+        return edited;
     });
     var body = bodyRaw.replaceAll(/(\n@[A-Za-z].*)|(^@[A-Za-z].*\n)|(@[A-Za-z].*$)/g, "") || undefined;
     var jsdoc = parseJSDocTags(jsdocTags);
