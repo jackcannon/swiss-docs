@@ -23,8 +23,7 @@ function _unsupportedIterableToArray(o, minLen) {
     if (n === "Map" || n === "Set") return Array.from(n);
     if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen);
 }
-import { ObjectTools, fn } from "swiss-ak";
-import { matchBrackets } from "./utils/matchBrackets.js";
+import { ObjectTools, fn, StringTools } from "swiss-ak";
 export var parseJSDocTags = function(jsdocTags) {
     var params = jsdocTags.filter(function(tag) {
         return tag.startsWith("@param") || tag.startsWith("@arg ") || tag.startsWith("@argument");
@@ -32,7 +31,7 @@ export var parseJSDocTags = function(jsdocTags) {
         var withoutTag = tag.replace(/\s*@\S+/, "").trim();
         var typeRaw = "";
         if (withoutTag.startsWith("{")) {
-            typeRaw = matchBrackets.grabUnique(withoutTag, "curly", 0);
+            typeRaw = StringTools.matchBrackets.grabUnique(withoutTag, "curly", 0);
         }
         var type = typeRaw.replaceAll(/^\{|\}$/g, "") || undefined;
         var withoutType = withoutTag.replace(typeRaw, "").trim();
@@ -42,7 +41,7 @@ export var parseJSDocTags = function(jsdocTags) {
         var defaultValue;
         if (withoutType.startsWith("[") && withoutType.includes("]")) {
             isOptional = true;
-            var nameRaw = matchBrackets.grabUnique(withoutType, "square", 0);
+            var nameRaw = StringTools.matchBrackets.grabUnique(withoutType, "square", 0);
             var withoutName = withoutType.replace(nameRaw, "").trim();
             words = withoutName.split(" ").filter(fn.isTruthy);
             nameRaw = nameRaw.slice(1, -1);
@@ -74,7 +73,7 @@ export var parseJSDocTags = function(jsdocTags) {
         var withoutTag = tag.replace(/\s*@\S+/, "").trim();
         var typeRaw = "";
         if (withoutTag.startsWith("{")) {
-            typeRaw = matchBrackets.grabUnique(withoutTag, "curly", 0);
+            typeRaw = StringTools.matchBrackets.grabUnique(withoutTag, "curly", 0);
         }
         var type = typeRaw.replaceAll(/^\{|\}$/g, "") || undefined;
         var withoutType = withoutTag.replace(typeRaw, "").trim();

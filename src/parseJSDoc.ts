@@ -1,6 +1,5 @@
-import { ObjectTools, fn } from 'swiss-ak';
+import { ObjectTools, fn, StringTools } from 'swiss-ak';
 import { JSDocInfo, JSDocParam, JSDocReturns } from './types.js';
-import { matchBrackets } from './utils/matchBrackets.js';
 
 export const parseJSDocTags = (jsdocTags: string[]): JSDocInfo => {
   const params: JSDocParam[] = jsdocTags
@@ -10,7 +9,7 @@ export const parseJSDocTags = (jsdocTags: string[]): JSDocInfo => {
 
       let typeRaw: string = '';
       if (withoutTag.startsWith('{')) {
-        typeRaw = matchBrackets.grabUnique(withoutTag, 'curly', 0);
+        typeRaw = StringTools.matchBrackets.grabUnique(withoutTag, 'curly', 0);
       }
       const type = typeRaw.replaceAll(/^\{|\}$/g, '') || undefined;
 
@@ -22,7 +21,7 @@ export const parseJSDocTags = (jsdocTags: string[]): JSDocInfo => {
       let defaultValue: string;
       if (withoutType.startsWith('[') && withoutType.includes(']')) {
         isOptional = true;
-        let nameRaw = matchBrackets.grabUnique(withoutType, 'square', 0);
+        let nameRaw = StringTools.matchBrackets.grabUnique(withoutType, 'square', 0);
         const withoutName = withoutType.replace(nameRaw, '').trim();
         words = withoutName.split(' ').filter(fn.isTruthy);
         nameRaw = nameRaw.slice(1, -1);
@@ -61,7 +60,7 @@ export const parseJSDocTags = (jsdocTags: string[]): JSDocInfo => {
 
     let typeRaw: string = '';
     if (withoutTag.startsWith('{')) {
-      typeRaw = matchBrackets.grabUnique(withoutTag, 'curly', 0);
+      typeRaw = StringTools.matchBrackets.grabUnique(withoutTag, 'curly', 0);
     }
     const type = typeRaw.replaceAll(/^\{|\}$/g, '') || undefined;
 
