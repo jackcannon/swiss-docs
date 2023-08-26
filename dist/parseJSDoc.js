@@ -32,10 +32,7 @@ export var parseJSDocTags = function(jsdocTags) {
         var withoutTag = tag.replace(/\s*@\S+/, "").trim();
         var typeRaw = "";
         if (withoutTag.startsWith("{")) {
-            var _matchedBrackets_match;
-            var matchedBrackets = matchBrackets.unique(withoutTag);
-            var foundTypeDirty = (_matchedBrackets_match = matchedBrackets.match(/❴1✧(.|\n)*❵1✧/)) === null || _matchedBrackets_match === void 0 ? void 0 : _matchedBrackets_match[0];
-            typeRaw = matchBrackets.clean(foundTypeDirty);
+            typeRaw = matchBrackets.grabUnique(withoutTag, "curly", 0);
         }
         var type = typeRaw.replaceAll(/^\{|\}$/g, "") || undefined;
         var withoutType = withoutTag.replace(typeRaw, "").trim();
@@ -44,9 +41,8 @@ export var parseJSDocTags = function(jsdocTags) {
         var isOptional = false;
         var defaultValue;
         if (withoutType.startsWith("[") && withoutType.includes("]")) {
-            var _withoutType_match;
             isOptional = true;
-            var nameRaw = (_withoutType_match = withoutType.match(/\[.*\]/)) === null || _withoutType_match === void 0 ? void 0 : _withoutType_match[0];
+            var nameRaw = matchBrackets.grabUnique(withoutType, "square", 0);
             var withoutName = withoutType.replace(nameRaw, "").trim();
             words = withoutName.split(" ").filter(fn.isTruthy);
             nameRaw = nameRaw.slice(1, -1);
@@ -78,10 +74,7 @@ export var parseJSDocTags = function(jsdocTags) {
         var withoutTag = tag.replace(/\s*@\S+/, "").trim();
         var typeRaw = "";
         if (withoutTag.startsWith("{")) {
-            var _matchedBrackets_match;
-            var matchedBrackets = matchBrackets.unique(withoutTag);
-            var foundTypeDirty = (_matchedBrackets_match = matchedBrackets.match(/❴1✧(.|\n)*❵1✧/)) === null || _matchedBrackets_match === void 0 ? void 0 : _matchedBrackets_match[0];
-            typeRaw = matchBrackets.clean(foundTypeDirty);
+            typeRaw = matchBrackets.grabUnique(withoutTag, "curly", 0);
         }
         var type = typeRaw.replaceAll(/^\{|\}$/g, "") || undefined;
         var withoutType = withoutTag.replace(typeRaw, "").trim();

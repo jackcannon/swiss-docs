@@ -10,9 +10,7 @@ export const parseJSDocTags = (jsdocTags: string[]): JSDocInfo => {
 
       let typeRaw: string = '';
       if (withoutTag.startsWith('{')) {
-        const matchedBrackets = matchBrackets.unique(withoutTag);
-        const foundTypeDirty = matchedBrackets.match(/❴1✧(.|\n)*❵1✧/)?.[0];
-        typeRaw = matchBrackets.clean(foundTypeDirty);
+        typeRaw = matchBrackets.grabUnique(withoutTag, 'curly', 0);
       }
       const type = typeRaw.replaceAll(/^\{|\}$/g, '') || undefined;
 
@@ -24,7 +22,7 @@ export const parseJSDocTags = (jsdocTags: string[]): JSDocInfo => {
       let defaultValue: string;
       if (withoutType.startsWith('[') && withoutType.includes(']')) {
         isOptional = true;
-        let nameRaw = withoutType.match(/\[.*\]/)?.[0];
+        let nameRaw = matchBrackets.grabUnique(withoutType, 'square', 0);
         const withoutName = withoutType.replace(nameRaw, '').trim();
         words = withoutName.split(' ').filter(fn.isTruthy);
         nameRaw = nameRaw.slice(1, -1);
@@ -63,9 +61,7 @@ export const parseJSDocTags = (jsdocTags: string[]): JSDocInfo => {
 
     let typeRaw: string = '';
     if (withoutTag.startsWith('{')) {
-      const matchedBrackets = matchBrackets.unique(withoutTag);
-      const foundTypeDirty = matchedBrackets.match(/❴1✧(.|\n)*❵1✧/)?.[0];
-      typeRaw = matchBrackets.clean(foundTypeDirty);
+      typeRaw = matchBrackets.grabUnique(withoutTag, 'curly', 0);
     }
     const type = typeRaw.replaceAll(/^\{|\}$/g, '') || undefined;
 

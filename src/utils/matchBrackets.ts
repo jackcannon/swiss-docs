@@ -34,23 +34,23 @@ export namespace matchBrackets {
     }
     let infos = {
       round: {
-        depth: 0,
-        currentID: 0,
+        depth: -1,
+        currentID: -1,
         active: []
       },
       square: {
-        depth: 0,
-        currentID: 0,
+        depth: -1,
+        currentID: -1,
         active: []
       },
       curly: {
-        depth: 0,
-        currentID: 0,
+        depth: -1,
+        currentID: -1,
         active: []
       },
       angle: {
-        depth: 0,
-        currentID: 0,
+        depth: -1,
+        currentID: -1,
         active: []
       }
     };
@@ -76,7 +76,7 @@ export namespace matchBrackets {
         }
       }
 
-      return id;
+      return outputDepth ? depth : id;
     };
 
     return input.replaceAll(/\(|\)|\[|\]|\{|\}|\<|\>/g, (br) => {
@@ -120,7 +120,7 @@ export namespace matchBrackets {
    * @param {Partial<BracketReplaceSymbols>} [replaceSymbols={}]
    * @returns {string}
    */
-  export const depth = (input: string, replaceSymbols: Partial<BracketReplaceSymbols> = {}): string => runReplace(input, replaceSymbols, false);
+  export const depth = (input: string, replaceSymbols: Partial<BracketReplaceSymbols> = {}): string => runReplace(input, replaceSymbols, true);
 
   /**<!-- DOCS: StringTools.matchBrackets.clean #### -->
    * clean
@@ -160,6 +160,72 @@ export namespace matchBrackets {
     const regex = new RegExp(`(${startSyms.map((s) => `\\${s}`).join('|')})[0-9]+${fullSyms.END}`, 'g');
     return input.replaceAll(regex, (m, startSym) => invertedSyms[startSym] || '');
   };
+
+  const runGrab = (
+    input: string,
+    bracketType: '()' | '[]' | '{}' | '<>' | 'round' | 'square' | 'curly' | 'angle' = 'round',
+    subjectID: number = 0,
+    replaceSymbols: Partial<BracketReplaceSymbols> = {},
+    isDepth: boolean = false
+  ): string[] => {
+    const fullSyms = getReplaceSymbols(replaceSymbols);
+    const [openSym, closeSym] = {
+      '()': ['(', ')'],
+      '[]': ['[', ']'],
+      '{}': ['{', '}'],
+      '<>': ['<', '>'],
+      round: ['(', ')'],
+      square: ['[', ']'],
+      curly: ['{', '}'],
+      angle: ['<', '>']
+    }[bracketType].map((s) => fullSyms[s] as string);
+    const endSym = fullSyms.END;
+
+    const fullDirty = isDepth ? depth(input, replaceSymbols) : unique(input, replaceSymbols);
+    const regex = new RegExp(`${openSym}${subjectID}${endSym}(.|\n)*?${closeSym}${subjectID}${endSym}`, 'g');
+    const foundDirty = [...(fullDirty.matchAll(regex) || [])].map((match) => match[0]);
+
+    const found = foundDirty.map((str) => clean(str, replaceSymbols));
+    return found;
+  };
+
+  /**<!-- DOCS: StringTools.matchBrackets.grab #### -->
+   * grab
+   *
+   * - `StringTools.matchBrackets.grab`
+   *
+   * TODO descpription
+   * Grabs all at given depth
+   *
+   * ```typescript
+   * // TODO example
+   * ```
+   */
+  export const grab = (
+    input: string,
+    bracketType: '()' | '[]' | '{}' | '<>' | 'round' | 'square' | 'curly' | 'angle' = 'round',
+    depthID: number = 0,
+    replaceSymbols: Partial<BracketReplaceSymbols> = {}
+  ): string[] => runGrab(input, bracketType, depthID, replaceSymbols, true);
+
+  /**<!-- DOCS: StringTools.matchBrackets.grabUnique #### -->
+   * grabUnique
+   *
+   * - `StringTools.matchBrackets.grabUnique`
+   *
+   * TODO descpription
+   * Grabs all at given depth
+   *
+   * ```typescript
+   * // TODO example
+   * ```
+   */
+  export const grabUnique = (
+    input: string,
+    bracketType: '()' | '[]' | '{}' | '<>' | 'round' | 'square' | 'curly' | 'angle' = 'round',
+    uniqueID: number = 0,
+    replaceSymbols: Partial<BracketReplaceSymbols> = {}
+  ): string => runGrab(input, bracketType, uniqueID, replaceSymbols, false)?.[0];
 
   /**<!-- DOCS: StringTools.matchBrackets.getReplaceSymbols #### -->
    * getReplaceSymbols

@@ -6,6 +6,9 @@ function _arrayLikeToArray(arr, len) {
 function _arrayWithHoles(arr) {
     if (Array.isArray(arr)) return arr;
 }
+function _arrayWithoutHoles(arr) {
+    if (Array.isArray(arr)) return _arrayLikeToArray(arr);
+}
 function _defineProperty(obj, key, value) {
     if (key in obj) {
         Object.defineProperty(obj, key, {
@@ -18,6 +21,9 @@ function _defineProperty(obj, key, value) {
         obj[key] = value;
     }
     return obj;
+}
+function _iterableToArray(iter) {
+    if (typeof Symbol !== "undefined" && iter[Symbol.iterator] != null || iter["@@iterator"] != null) return Array.from(iter);
 }
 function _iterableToArrayLimit(arr, i) {
     var _i = arr == null ? null : typeof Symbol !== "undefined" && arr[Symbol.iterator] || arr["@@iterator"];
@@ -45,6 +51,9 @@ function _iterableToArrayLimit(arr, i) {
 }
 function _nonIterableRest() {
     throw new TypeError("Invalid attempt to destructure non-iterable instance.\\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
+}
+function _nonIterableSpread() {
+    throw new TypeError("Invalid attempt to spread non-iterable instance.\\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
 }
 function _objectSpread(target) {
     for(var i = 1; i < arguments.length; i++){
@@ -91,6 +100,9 @@ function _objectWithoutPropertiesLoose(source, excluded) {
 function _slicedToArray(arr, i) {
     return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest();
 }
+function _toConsumableArray(arr) {
+    return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread();
+}
 function _unsupportedIterableToArray(o, minLen) {
     if (!o) return;
     if (typeof o === "string") return _arrayLikeToArray(o, minLen);
@@ -125,23 +137,23 @@ import { ObjectTools } from "swiss-ak";
         var fullSyms = getReplaceSymbols(replaceSymbols);
         var infos = {
             round: {
-                depth: 0,
-                currentID: 0,
+                depth: -1,
+                currentID: -1,
                 active: []
             },
             square: {
-                depth: 0,
-                currentID: 0,
+                depth: -1,
+                currentID: -1,
                 active: []
             },
             curly: {
-                depth: 0,
-                currentID: 0,
+                depth: -1,
+                currentID: -1,
                 active: []
             },
             angle: {
-                depth: 0,
-                currentID: 0,
+                depth: -1,
+                currentID: -1,
                 active: []
             }
         };
@@ -171,7 +183,7 @@ import { ObjectTools } from "swiss-ak";
                     }
                 }
             }
-            return id;
+            return outputDepth ? depth : id;
         };
         return input.replaceAll(/\(|\)|\[|\]|\{|\}|\<|\>/g, function(br) {
             var id = updateInfo(infos.round, "(", ")", br) || updateInfo(infos.square, "[", "]", br) || updateInfo(infos.curly, "{", "}", br) || updateInfo(infos.angle, "<", ">", br);
@@ -184,7 +196,7 @@ import { ObjectTools } from "swiss-ak";
     };
     var depth = matchBrackets.depth = function(input) {
         var replaceSymbols = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : {};
-        return runReplace(input, replaceSymbols, false);
+        return runReplace(input, replaceSymbols, true);
     };
     var clean = matchBrackets.clean = function(input) {
         var replaceSymbols = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : {};
@@ -200,6 +212,65 @@ import { ObjectTools } from "swiss-ak";
         return input.replaceAll(regex, function(m, startSym) {
             return invertedSyms[startSym] || "";
         });
+    };
+    var runGrab = function(input) {
+        var bracketType = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : "round", subjectID = arguments.length > 2 && arguments[2] !== void 0 ? arguments[2] : 0, replaceSymbols = arguments.length > 3 && arguments[3] !== void 0 ? arguments[3] : {}, isDepth = arguments.length > 4 && arguments[4] !== void 0 ? arguments[4] : false;
+        var fullSyms = getReplaceSymbols(replaceSymbols);
+        var _bracketType_map = _slicedToArray(({
+            "()": [
+                "(",
+                ")"
+            ],
+            "[]": [
+                "[",
+                "]"
+            ],
+            "{}": [
+                "{",
+                "}"
+            ],
+            "<>": [
+                "<",
+                ">"
+            ],
+            round: [
+                "(",
+                ")"
+            ],
+            square: [
+                "[",
+                "]"
+            ],
+            curly: [
+                "{",
+                "}"
+            ],
+            angle: [
+                "<",
+                ">"
+            ]
+        })[bracketType].map(function(s) {
+            return fullSyms[s];
+        }), 2), openSym = _bracketType_map[0], closeSym = _bracketType_map[1];
+        var endSym = fullSyms.END;
+        var fullDirty = isDepth ? depth(input, replaceSymbols) : unique(input, replaceSymbols);
+        var regex = new RegExp("".concat(openSym).concat(subjectID).concat(endSym, "(.|\n)*?").concat(closeSym).concat(subjectID).concat(endSym), "g");
+        var foundDirty = _toConsumableArray(fullDirty.matchAll(regex) || []).map(function(match) {
+            return match[0];
+        });
+        var found = foundDirty.map(function(str) {
+            return clean(str, replaceSymbols);
+        });
+        return found;
+    };
+    var grab = matchBrackets.grab = function(input) {
+        var bracketType = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : "round", depthID = arguments.length > 2 && arguments[2] !== void 0 ? arguments[2] : 0, replaceSymbols = arguments.length > 3 && arguments[3] !== void 0 ? arguments[3] : {};
+        return runGrab(input, bracketType, depthID, replaceSymbols, true);
+    };
+    var grabUnique = matchBrackets.grabUnique = function(input) {
+        var bracketType = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : "round", uniqueID = arguments.length > 2 && arguments[2] !== void 0 ? arguments[2] : 0, replaceSymbols = arguments.length > 3 && arguments[3] !== void 0 ? arguments[3] : {};
+        var _runGrab;
+        return (_runGrab = runGrab(input, bracketType, uniqueID, replaceSymbols, false)) === null || _runGrab === void 0 ? void 0 : _runGrab[0];
     };
     var getReplaceSymbols = matchBrackets.getReplaceSymbols = function() {
         var replaceSymbols = arguments.length > 0 && arguments[0] !== void 0 ? arguments[0] : {};
