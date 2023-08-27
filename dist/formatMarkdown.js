@@ -176,7 +176,7 @@ var formatSegmentBackToX = function(segment, opts, tree) {
     var targetName = "top";
     if (target) {
         targetURL = "#" + getID(target.title);
-        targetName = target.title;
+        targetName = "<b>".concat(target.title, "</b>");
     }
     var backToX = '\n<p style="text-align: right" align="right"><a href="'.concat(targetURL, '"> [↑ Back to ').concat(targetName, " ↑] </a></p>");
     return backToX;

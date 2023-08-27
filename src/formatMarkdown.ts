@@ -146,7 +146,7 @@ const formatSegmentBackToX = (segment: Segment, opts: CmdOptions, tree: SegmentT
   let targetName = 'top';
   if (target) {
     targetURL = '#' + getID(target.title);
-    targetName = target.title;
+    targetName = `<b>${target.title}</b>`;
   }
 
   const backToX = `\n<p style="text-align: right" align="right"><a href="${targetURL}"> [↑ Back to ${targetName} ↑] </a></p>`;
