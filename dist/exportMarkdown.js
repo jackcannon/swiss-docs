@@ -148,10 +148,12 @@ var __generator = this && this.__generator || function(thisArg, body) {
     }
 };
 import fsP from "fs/promises";
-import { formatMain, formatTOC } from "./formatMarkdown.js";
+import { write } from "./utils/write.js";
+import { flattenTree } from "./utils/treeUtils.js";
+import { formatMain, formatPrimaryTOC } from "./formatMarkdown.js";
 export var exportAndSave = function() {
-    var _ref = _asyncToGenerator(function(segments, opts) {
-        var template, output, filteredSegments, tags, wantsTOC, toc, replacement, wantsMain, main, replacement1;
+    var _ref = _asyncToGenerator(function(tree, opts) {
+        var template, output, tags, wantsTOC, filteredSegments, toc, replacement, wantsMain, filteredSegments1, main, replacement1;
         return __generator(this, function(_state) {
             switch(_state.label){
                 case 0:
@@ -162,9 +164,6 @@ export var exportAndSave = function() {
                 case 1:
                     template = _state.sent();
                     output = template;
-                    filteredSegments = segments.filter(function(segment) {
-                        return segment.priority >= 0;
-                    });
                     tags = _toConsumableArray(template.match(/<!-- ?DOCS: ?(.*?) ?-->/g)).map(function(s) {
                         return s.replace(/<!-- ?DOCS: ?(.*?) ?-->/g, "$1").trim();
                     });
@@ -172,7 +171,13 @@ export var exportAndSave = function() {
                         return tag.toUpperCase().includes("TOC");
                     }).length >= 2;
                     if (wantsTOC) {
-                        toc = formatTOC(filteredSegments, opts);
+                        filteredSegments = flattenTree(tree, function(segment) {
+                            return segment.subsection;
+                        })// don't include segments with negative priority
+                        .filter(function(segment) {
+                            return segment.priority >= 0;
+                        });
+                        toc = formatPrimaryTOC(filteredSegments, opts, tree);
                         replacement = [
                             "<!-- DOCS: TOC START -->",
                             "",
@@ -186,7 +191,11 @@ export var exportAndSave = function() {
                         return tag.toUpperCase().includes("MAIN");
                     }).length >= 2;
                     if (wantsMain) {
-                        main = formatMain(filteredSegments, opts);
+                        filteredSegments1 = flattenTree(tree)// don't include segments with negative priority
+                        .filter(function(segment) {
+                            return segment.priority >= 0;
+                        });
+                        main = formatMain(filteredSegments1, opts, tree);
                         replacement1 = [
                             "<!-- DOCS: MAIN START -->",
                             "",
@@ -198,7 +207,7 @@ export var exportAndSave = function() {
                     }
                     return [
                         4,
-                        fsP.writeFile(opts.output, output, "utf8")
+                        write(opts.output, output)
                     ];
                 case 2:
                     _state.sent();
@@ -208,7 +217,7 @@ export var exportAndSave = function() {
             }
         });
     });
-    return function exportAndSave(segments, opts) {
+    return function exportAndSave(tree, opts) {
         return _ref.apply(this, arguments);
     };
 }();

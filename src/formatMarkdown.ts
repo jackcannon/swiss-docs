@@ -1,44 +1,50 @@
 import { StringTools } from 'swiss-ak';
 import { table } from 'swiss-node';
 
-import { CmdOptions, DocSegment, JSDocParam } from './types.js';
+import { findAncestorSubsection, flattenTree } from './utils/treeUtils.js';
+import { CmdOptions, Segment, JSDocParam, SegmentFlatList, SegmentTree } from './types.js';
 
 const specialToken = 'SUPERSECRETSPECIALCHARACTERFORSWISS123GOAWAYTHX';
 
 const getID = (title: string) =>
   StringTools.toLowerSlugCase(title.replace(/[^A-Za-z0-9 ]/g, specialToken)).replaceAll(specialToken.toLowerCase(), '');
 
-export const formatTOC = (segments: DocSegment[], opts: CmdOptions): string => {
-  const lines = segments.map(({ title, titleLevel }) => {
-    const id = getID(title);
-    const indent = '  '.repeat(titleLevel);
-    const link = `[${title}](#${id})`;
+const getTableOfContents = (segments: SegmentFlatList, opts: CmdOptions, levelOffset: number, includeFirstLine: boolean = false) => {
+  const lines = segments.map((segment) => {
+    const id = getID(segment.title);
+    const indent = '  '.repeat(segment.titleLevel - levelOffset);
+    const titleOut = segment.subsection || segment.children?.length ? `**${segment.title}**` : segment.title;
+    const link = `[${titleOut}](#${id})`;
     return `${indent}- ${link}`;
   });
 
-  const firstLine = `  - [${opts.header || 'Table of Contents'}](#)`;
+  const firstLine = `  - [**${opts.header || 'Table of Contents'}**](#)`;
 
-  const output = [firstLine, ...lines].join('\n');
+  const outLines = includeFirstLine ? [firstLine, ...lines] : lines;
+  const output = outLines.join('\n');
 
   return output;
 };
 
+export const formatPrimaryTOC = (segments: SegmentFlatList, opts: CmdOptions, tree: SegmentTree): string =>
+  getTableOfContents(segments, opts, 0, true);
+
 const getParamTypeDisplay = (param: JSDocParam) => (param.isRestParam ? param.type.replace(/^\.\.\./, '') + '[]' : param.type);
 
-const formatSegmentTitle = (segment: DocSegment, opts: CmdOptions) => {
+const formatSegmentTitle = (segment: Segment, opts: CmdOptions, tree: SegmentTree) => {
   return `${'#'.repeat(segment.titleLevel)} ${segment.title}`;
 };
-const formatSegmentBody = (segment: DocSegment, opts: CmdOptions, removeAccessors: boolean = false) => {
-  const body = removeAccessors
-    ? segment.body
-        .replace(/^\s?- \`(.*)\`$/gm, '')
-        .trim()
-        .replaceAll(/\n{3,}/g, '\n\n')
-    : segment.body;
 
+const formatSegmentTOC = (segment: Segment, opts: CmdOptions, tree: SegmentTree) => {
+  const childSegments = flattenTree(segment.children || [], (segment) => segment.subsection);
+  const toc = getTableOfContents([segment, ...childSegments], opts, Math.max(0, segment.titleLevel - 1), false);
+  return '\n' + toc + '\n';
+};
+const formatSegmentBody = (segment: Segment, opts: CmdOptions, tree: SegmentTree) => {
+  const body = segment.body;
   return '\n' + body + '\n';
 };
-const formatSegmentJSDoc = (segment: DocSegment, opts: CmdOptions) => {
+const formatSegmentJSDoc = (segment: Segment, opts: CmdOptions, tree: SegmentTree) => {
   let output = '';
 
   const { params, returns } = segment.jsdoc;
@@ -112,40 +118,59 @@ const formatSegmentJSDoc = (segment: DocSegment, opts: CmdOptions) => {
   }
   return output;
 };
-const formatSegmentSignature = (segment: DocSegment, opts: CmdOptions) => {
-  const accessors = [...segment.body.matchAll(/^\s?- \`(.*)\`$/gm)].map((match) => match[1]);
+const formatSegmentSignature = (segment: Segment, opts: CmdOptions, tree: SegmentTree) => {
+  const accessors = segment.accessors.length ? segment.accessors : [segment.name];
 
-  const params = segment.jsdoc.params
-    ?.map((param) => {
-      return `${param.isRestParam ? '...' : ''}${param.name}${param.type ? ': ' + getParamTypeDisplay(param) : ''}`;
-    })
-    .join(', ');
-  const funcSuffix = `(${params})${segment.jsdoc?.returns?.type ? ': ' + segment.jsdoc.returns.type : ''}`;
+  let section: string = '';
 
-  const section = (accessors.length ? accessors : [segment.name]).map((accessor) => `${accessor}${funcSuffix}`).join('\n');
+  const isFunction = !!segment.jsdoc?.returns;
+  if (isFunction) {
+    const params = segment.jsdoc.params
+      ?.map((param) => {
+        return `${param.isRestParam ? '...' : ''}${param.name}${param.type ? ': ' + getParamTypeDisplay(param) : ''}`;
+      })
+      .join(', ');
+    const funcSuffix = `(${params})${segment.jsdoc?.returns?.type ? ': ' + segment.jsdoc.returns.type : ''}`;
+
+    section = accessors.map((accessor) => `${accessor}${funcSuffix}`).join('\n');
+  } else {
+    section = accessors.map((accessor) => `${accessor};`).join('\n');
+  }
+
   return '\n\n```typescript\n' + section + '\n```\n';
 };
-const formatSegmentBackToTop = (segment: DocSegment, opts: CmdOptions) => {
-  const backToTop = `\n<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>`;
-  return backToTop;
+const formatSegmentBackToX = (segment: Segment, opts: CmdOptions, tree: SegmentTree) => {
+  const target = findAncestorSubsection(tree, segment);
+
+  let targetURL = '#';
+  let targetName = 'top';
+  if (target) {
+    targetURL = '#' + getID(target.title);
+    targetName = target.title;
+  }
+
+  const backToX = `\n<p style="text-align: right" align="right"><a href="${targetURL}"> [↑ Back to ${targetName} ↑] </a></p>`;
+  return backToX;
 };
 
-const formatMainSegment = (segment: DocSegment, opts: CmdOptions): string => {
+const formatMainSegment = (segment: Segment, opts: CmdOptions, tree: SegmentTree): string => {
   let output = '';
 
   const showBody = !!(segment.body !== undefined && segment.body !== '');
   const showJSDoc = !!(segment.jsdoc?.params?.length || segment.jsdoc?.returns);
-  const showSignature = !!segment.jsdoc?.returns;
+  const showTOC = segment.subsection && segment.children?.length;
+  const showSignature = segment.accessors.length;
 
-  output += formatSegmentTitle(segment, opts);
-  if (showSignature) output += formatSegmentSignature(segment, opts);
-  if (showBody) output += formatSegmentBody(segment, opts, showSignature);
-  if (showJSDoc) output += formatSegmentJSDoc(segment, opts);
-  if (showBody || showSignature || showJSDoc) output += formatSegmentBackToTop(segment, opts);
+  output += formatSegmentTitle(segment, opts, tree);
+  if (showSignature) output += formatSegmentSignature(segment, opts, tree);
+  if (showBody) output += formatSegmentBody(segment, opts, tree);
+  if (showTOC) output += formatSegmentTOC(segment, opts, tree);
+  if (showJSDoc) output += formatSegmentJSDoc(segment, opts, tree);
+  if (showBody || showJSDoc) output += formatSegmentBackToX(segment, opts, tree);
 
   return output;
 };
 
-export const formatMain = (segments: DocSegment[], opts: CmdOptions): string => {
-  return segments.map((segment) => formatMainSegment(segment, opts)).join('\n\n');
+export const formatMain = (segments: SegmentFlatList, opts: CmdOptions, tree: SegmentTree): string => {
+  return segments.map((segment) => formatMainSegment(segment, opts, tree)).join('\n\n');
 };

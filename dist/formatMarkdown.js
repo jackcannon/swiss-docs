@@ -25,36 +25,51 @@ function _unsupportedIterableToArray(o, minLen) {
 }
 import { StringTools } from "swiss-ak";
 import { table } from "swiss-node";
+import { findAncestorSubsection, flattenTree } from "./utils/treeUtils.js";
 var specialToken = "SUPERSECRETSPECIALCHARACTERFORSWISS123GOAWAYTHX";
 var getID = function(title) {
     return StringTools.toLowerSlugCase(title.replace(/[^A-Za-z0-9 ]/g, specialToken)).replaceAll(specialToken.toLowerCase(), "");
 };
-export var formatTOC = function(segments, opts) {
-    var lines = segments.map(function(param) {
-        var title = param.title, titleLevel = param.titleLevel;
-        var id = getID(title);
-        var indent = "  ".repeat(titleLevel);
-        var link = "[".concat(title, "](#").concat(id, ")");
+var getTableOfContents = function(segments, opts, levelOffset) {
+    var includeFirstLine = arguments.length > 3 && arguments[3] !== void 0 ? arguments[3] : false;
+    var lines = segments.map(function(segment) {
+        var _segment_children;
+        var id = getID(segment.title);
+        var indent = "  ".repeat(segment.titleLevel - levelOffset);
+        var titleOut = segment.subsection || ((_segment_children = segment.children) === null || _segment_children === void 0 ? void 0 : _segment_children.length) ? "**".concat(segment.title, "**") : segment.title;
+        var link = "[".concat(titleOut, "](#").concat(id, ")");
         return "".concat(indent, "- ").concat(link);
     });
-    var firstLine = "  - [".concat(opts.header || "Table of Contents", "](#)");
-    var output = [
+    var firstLine = "  - [**".concat(opts.header || "Table of Contents", "**](#)");
+    var outLines = includeFirstLine ? [
         firstLine
-    ].concat(_toConsumableArray(lines)).join("\n");
+    ].concat(_toConsumableArray(lines)) : lines;
+    var output = outLines.join("\n");
     return output;
+};
+export var formatPrimaryTOC = function(segments, opts, tree) {
+    return getTableOfContents(segments, opts, 0, true);
 };
 var getParamTypeDisplay = function(param) {
     return param.isRestParam ? param.type.replace(/^\.\.\./, "") + "[]" : param.type;
 };
-var formatSegmentTitle = function(segment, opts) {
+var formatSegmentTitle = function(segment, opts, tree) {
     return "".concat("#".repeat(segment.titleLevel), " ").concat(segment.title);
 };
-var formatSegmentBody = function(segment, opts) {
-    var removeAccessors = arguments.length > 2 && arguments[2] !== void 0 ? arguments[2] : false;
-    var body = removeAccessors ? segment.body.replace(/^\s?- \`(.*)\`$/gm, "").trim().replaceAll(/\n{3,}/g, "\n\n") : segment.body;
+var formatSegmentTOC = function(segment, opts, tree) {
+    var childSegments = flattenTree(segment.children || [], function(segment) {
+        return segment.subsection;
+    });
+    var toc = getTableOfContents([
+        segment
+    ].concat(_toConsumableArray(childSegments)), opts, Math.max(0, segment.titleLevel - 1), false);
+    return "\n" + toc + "\n";
+};
+var formatSegmentBody = function(segment, opts, tree) {
+    var body = segment.body;
     return "\n" + body + "\n";
 };
-var formatSegmentJSDoc = function(segment, opts) {
+var formatSegmentJSDoc = function(segment, opts, tree) {
     var output = "";
     var _segment_jsdoc = segment.jsdoc, params = _segment_jsdoc.params, returns = _segment_jsdoc.returns;
     var IGNORE = -123;
@@ -132,41 +147,57 @@ var formatSegmentJSDoc = function(segment, opts) {
     }
     return output;
 };
-var formatSegmentSignature = function(segment, opts) {
-    var _segment_jsdoc_params, _segment_jsdoc, _segment_jsdoc_returns;
-    var accessors = _toConsumableArray(segment.body.matchAll(/^\s?- \`(.*)\`$/gm)).map(function(match) {
-        return match[1];
-    });
-    var params = (_segment_jsdoc_params = segment.jsdoc.params) === null || _segment_jsdoc_params === void 0 ? void 0 : _segment_jsdoc_params.map(function(param) {
-        return "".concat(param.isRestParam ? "..." : "").concat(param.name).concat(param.type ? ": " + getParamTypeDisplay(param) : "");
-    }).join(", ");
-    var funcSuffix = "(".concat(params, ")").concat(((_segment_jsdoc = segment.jsdoc) === null || _segment_jsdoc === void 0 ? void 0 : (_segment_jsdoc_returns = _segment_jsdoc.returns) === null || _segment_jsdoc_returns === void 0 ? void 0 : _segment_jsdoc_returns.type) ? ": " + segment.jsdoc.returns.type : "");
-    var section = (accessors.length ? accessors : [
+var formatSegmentSignature = function(segment, opts, tree) {
+    var _segment_jsdoc;
+    var accessors = segment.accessors.length ? segment.accessors : [
         segment.name
-    ]).map(function(accessor) {
-        return "".concat(accessor).concat(funcSuffix);
-    }).join("\n");
+    ];
+    var section = "";
+    var isFunction = !!((_segment_jsdoc = segment.jsdoc) === null || _segment_jsdoc === void 0 ? void 0 : _segment_jsdoc.returns);
+    if (isFunction) {
+        var _segment_jsdoc_params, _segment_jsdoc1, _segment_jsdoc_returns;
+        var params = (_segment_jsdoc_params = segment.jsdoc.params) === null || _segment_jsdoc_params === void 0 ? void 0 : _segment_jsdoc_params.map(function(param) {
+            return "".concat(param.isRestParam ? "..." : "").concat(param.name).concat(param.type ? ": " + getParamTypeDisplay(param) : "");
+        }).join(", ");
+        var funcSuffix = "(".concat(params, ")").concat(((_segment_jsdoc1 = segment.jsdoc) === null || _segment_jsdoc1 === void 0 ? void 0 : (_segment_jsdoc_returns = _segment_jsdoc1.returns) === null || _segment_jsdoc_returns === void 0 ? void 0 : _segment_jsdoc_returns.type) ? ": " + segment.jsdoc.returns.type : "");
+        section = accessors.map(function(accessor) {
+            return "".concat(accessor).concat(funcSuffix);
+        }).join("\n");
+    } else {
+        section = accessors.map(function(accessor) {
+            return "".concat(accessor, ";");
+        }).join("\n");
+    }
     return "\n\n```typescript\n" + section + "\n```\n";
 };
-var formatSegmentBackToTop = function(segment, opts) {
-    var backToTop = '\n<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>';
-    return backToTop;
+var formatSegmentBackToX = function(segment, opts, tree) {
+    var target = findAncestorSubsection(tree, segment);
+    var targetURL = "#";
+    var targetName = "top";
+    if (target) {
+        targetURL = "#" + getID(target.title);
+        targetName = target.title;
+    }
+    var backToX = '\n<p style="text-align: right" align="right"><a href="'.concat(targetURL, '"> [↑ Back to ').concat(targetName, " ↑] </a></p>");
+    return backToX;
 };
-var formatMainSegment = function(segment, opts) {
-    var _segment_jsdoc, _segment_jsdoc_params, _segment_jsdoc1, _segment_jsdoc2;
+var formatMainSegment = function(segment, opts, tree) {
+    var _segment_jsdoc, _segment_jsdoc_params, _segment_jsdoc1, _segment_children;
     var output = "";
     var showBody = !!(segment.body !== undefined && segment.body !== "");
     var showJSDoc = !!(((_segment_jsdoc = segment.jsdoc) === null || _segment_jsdoc === void 0 ? void 0 : (_segment_jsdoc_params = _segment_jsdoc.params) === null || _segment_jsdoc_params === void 0 ? void 0 : _segment_jsdoc_params.length) || ((_segment_jsdoc1 = segment.jsdoc) === null || _segment_jsdoc1 === void 0 ? void 0 : _segment_jsdoc1.returns));
-    var showSignature = !!((_segment_jsdoc2 = segment.jsdoc) === null || _segment_jsdoc2 === void 0 ? void 0 : _segment_jsdoc2.returns);
-    output += formatSegmentTitle(segment, opts);
-    if (showSignature) output += formatSegmentSignature(segment, opts);
-    if (showBody) output += formatSegmentBody(segment, opts, showSignature);
-    if (showJSDoc) output += formatSegmentJSDoc(segment, opts);
-    if (showBody || showSignature || showJSDoc) output += formatSegmentBackToTop(segment, opts);
+    var showTOC = segment.subsection && ((_segment_children = segment.children) === null || _segment_children === void 0 ? void 0 : _segment_children.length);
+    var showSignature = segment.accessors.length;
+    output += formatSegmentTitle(segment, opts, tree);
+    if (showSignature) output += formatSegmentSignature(segment, opts, tree);
+    if (showBody) output += formatSegmentBody(segment, opts, tree);
+    if (showTOC) output += formatSegmentTOC(segment, opts, tree);
+    if (showJSDoc) output += formatSegmentJSDoc(segment, opts, tree);
+    if (showBody || showJSDoc) output += formatSegmentBackToX(segment, opts, tree);
     return output;
 };
-export var formatMain = function(segments, opts) {
+export var formatMain = function(segments, opts, tree) {
     return segments.map(function(segment) {
-        return formatMainSegment(segment, opts);
+        return formatMainSegment(segment, opts, tree);
     }).join("\n\n");
 };

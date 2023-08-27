@@ -199,9 +199,10 @@ var __generator = this && this.__generator || function(thisArg, body) {
 import fsP from "fs/promises";
 import { PromiseTools, getProgressBar } from "swiss-ak";
 import transpile from "ts-to-jsdoc";
+import { write } from "./utils/write.js";
+import { warn } from "./utils/logs.js";
 import { parseComments } from "./parseComment.js";
 import { findCommentsInText, findSrcFiles } from "./find.js";
-import { warn } from "./utils/logs.js";
 export var runJSDocUpdate = function() {
     var _ref = _asyncToGenerator(function(opts) {
         var allFiles, progressBar;
@@ -220,7 +221,7 @@ export var runJSDocUpdate = function() {
                     progressBar.start();
                     return [
                         4,
-                        PromiseTools.eachLimit(4, allFiles, function() {
+                        PromiseTools.eachLimit(8, allFiles, function() {
                             var _ref = _asyncToGenerator(function(file) {
                                 return __generator(this, function(_state) {
                                     switch(_state.label){
@@ -415,7 +416,7 @@ var updateSingleFile = function() {
                     });
                     return [
                         4,
-                        fsP.writeFile(file, output, "utf8")
+                        write(file, output)
                     ];
                 case 6:
                     _state.sent();

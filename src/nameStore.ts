@@ -1,9 +1,9 @@
-import { DocSegment } from './types.js';
+import { Segment, SegmentFlatList } from './types.js';
 import { warn } from './utils/logs.js';
 
 export const nameStore = {};
 
-export const storeSegmentsInNameStore = (segments: DocSegment[]) => {
+export const storeSegmentsInNameStore = (segments: SegmentFlatList) => {
   segments.forEach((segment) => {
     if (segment.name) {
       if (nameStore[segment.name]) {
@@ -14,6 +14,6 @@ export const storeSegmentsInNameStore = (segments: DocSegment[]) => {
   });
 };
 
-export const getStoredSegment = (name: string): DocSegment => {
+export const getStoredSegment = (name: string): Segment => {
   return nameStore[name];
 };

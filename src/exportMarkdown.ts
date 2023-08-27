@@ -1,20 +1,24 @@
 import fsP from 'fs/promises';
 
-import { formatMain, formatTOC } from './formatMarkdown.js';
-import { CmdOptions, DocSegment } from './types.js';
+import { write } from './utils/write.js';
+import { flattenTree } from './utils/treeUtils.js';
 
-export const exportAndSave = async (segments: DocSegment[], opts: CmdOptions) => {
+import { formatMain, formatPrimaryTOC } from './formatMarkdown.js';
+import { CmdOptions, Segment, SegmentTree } from './types.js';
+
+export const exportAndSave = async (tree: SegmentTree, opts: CmdOptions) => {
   const template = await fsP.readFile(opts.template || opts.output, 'utf8');
   let output = template;
-
-  // Don't output segments with a negative priority
-  const filteredSegments = segments.filter((segment) => segment.priority >= 0);
 
   const tags = [...template.match(/<!-- ?DOCS: ?(.*?) ?-->/g)].map((s) => s.replace(/<!-- ?DOCS: ?(.*?) ?-->/g, '$1').trim());
 
   const wantsTOC = tags.filter((tag) => tag.toUpperCase().includes('TOC')).length >= 2;
   if (wantsTOC) {
-    const toc = formatTOC(filteredSegments, opts);
+    const filteredSegments = flattenTree(tree, (segment) => segment.subsection)
+      // don't include segments with negative priority
+      .filter((segment) => segment.priority >= 0);
+
+    const toc = formatPrimaryTOC(filteredSegments, opts, tree);
 
     const replacement = ['<!-- DOCS: TOC START -->', '', toc, '', '<!-- DOCS: TOC END -->'].join('\n');
 
@@ -23,11 +27,14 @@ export const exportAndSave = async (segments: DocSegment[], opts: CmdOptions) =>
 
   const wantsMain = tags.filter((tag) => tag.toUpperCase().includes('MAIN')).length >= 2;
   if (wantsMain) {
-    const main = formatMain(filteredSegments, opts);
+    const filteredSegments = flattenTree(tree)
+      // don't include segments with negative priority
+      .filter((segment) => segment.priority >= 0);
+    const main = formatMain(filteredSegments, opts, tree);
     const replacement = ['<!-- DOCS: MAIN START -->', '', main, '', '<!-- DOCS: MAIN END -->'].join('\n');
 
     output = output.replace(/<!-- ?DOCS: ?(START MAIN|MAIN START) ?-->(.|\n)*?<!-- ?DOCS: ?(END MAIN|MAIN END) ?-->/gi, replacement);
   }
 
-  await fsP.writeFile(opts.output, output, 'utf8');
+  await write(opts.output, output);
 };

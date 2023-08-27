@@ -96,13 +96,19 @@ export interface JSDocInfo {
   returns?: JSDocReturns;
 }
 
-export interface DocSegment {
+export interface Segment {
   priority: number;
   titleLevel: number;
+  subsection: boolean; // whether to have own table of contents
   name?: string;
   title: string;
   body: string;
+  accessors: string[];
   jsdoc: JSDocInfo;
+  children?: SegmentTree;
 }
 
-export type CombinedComment = FoundComment & DocSegment;
+export type CombinedComment = FoundComment & Segment;
+
+export type SegmentTree = Segment[];
+export type SegmentFlatList = Segment[];

@@ -193,7 +193,7 @@ var printOptions = function(opts) {
 };
 var run = function() {
     var _ref = _asyncToGenerator(function() {
-        var opts, foundComments, parsedComments, organised, e;
+        var opts, foundComments, segmentsUnsorted, organised, e;
         return __generator(this, function(_state) {
             switch(_state.label){
                 case 0:
@@ -224,9 +224,9 @@ var run = function() {
                     ];
                 case 3:
                     foundComments = _state.sent();
-                    parsedComments = parseComments(foundComments);
-                    storeSegmentsInNameStore(parsedComments);
-                    organised = organise(parsedComments);
+                    segmentsUnsorted = parseComments(foundComments);
+                    storeSegmentsInNameStore(segmentsUnsorted);
+                    organised = organise(segmentsUnsorted);
                     if (!opts.output) return [
                         3,
                         5

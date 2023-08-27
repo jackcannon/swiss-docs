@@ -1,12 +1,14 @@
 import fsP from 'fs/promises';
 
-import { PromiseTools, getProgressBar} from 'swiss-ak';
+import { PromiseTools, getProgressBar } from 'swiss-ak';
 import transpile from 'ts-to-jsdoc';
+
+import { write } from './utils/write.js';
+import { warn } from './utils/logs.js';
 
 import { CmdOptions, CombinedComment } from './types.js';
 import { parseComments } from './parseComment.js';
 import { findCommentsInText, findSrcFiles } from './find.js';
-import { warn } from './utils/logs.js';
 
 export const runJSDocUpdate = async (opts: CmdOptions) => {
   const allFiles = await findSrcFiles(opts);
@@ -16,7 +18,7 @@ export const runJSDocUpdate = async (opts: CmdOptions) => {
   });
   progressBar.start();
 
-  await PromiseTools.eachLimit(4, allFiles, async (file) => {
+  await PromiseTools.eachLimit(8, allFiles, async (file) => {
     await updateSingleFile(file);
     progressBar.next();
   });
@@ -123,5 +125,5 @@ const updateSingleFile = async (file: string) => {
     }
   });
 
-  await fsP.writeFile(file, output, 'utf8');
+  await write(file, output);
 };

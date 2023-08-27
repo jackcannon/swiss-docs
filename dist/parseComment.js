@@ -73,11 +73,13 @@ var parseMeta = function(comment) {
     var priority = Number((_metaContent_match_ = (_metaContent_match1 = metaContent.match(/-?[0-9]{1,}([.][0-9]{1,})?/g)) === null || _metaContent_match1 === void 0 ? void 0 : _metaContent_match1[0]) !== null && _metaContent_match_ !== void 0 ? _metaContent_match_ : defaultPriority);
     var _metaContent_match_1;
     var titleLevel = ((_metaContent_match_1 = (_metaContent_match2 = metaContent.match(/#+/g)) === null || _metaContent_match2 === void 0 ? void 0 : _metaContent_match2[0]) !== null && _metaContent_match_1 !== void 0 ? _metaContent_match_1 : "#".repeat(defaultTitleLevel)).length;
+    var subsection = metaContent.includes("#!");
     return {
         fullMeta: fullMeta,
         name: name,
         priority: priority,
-        titleLevel: titleLevel
+        titleLevel: titleLevel,
+        subsection: subsection
     };
 };
 var parseComment = function(param) {
@@ -90,7 +92,7 @@ var parseComment = function(param) {
         fileTitleLevel = titleLevel;
     }
     // parse the metadata
-    var _parseMeta1 = parseMeta(comment, filePriority, fileTitleLevel), fullMeta = _parseMeta1.fullMeta, name = _parseMeta1.name, priority1 = _parseMeta1.priority, titleLevel1 = _parseMeta1.titleLevel;
+    var _parseMeta1 = parseMeta(comment, filePriority, fileTitleLevel), fullMeta = _parseMeta1.fullMeta, name = _parseMeta1.name, priority1 = _parseMeta1.priority, titleLevel1 = _parseMeta1.titleLevel, subsection = _parseMeta1.subsection;
     // parse the content
     var withoutMeta = comment.replace(fullMeta, "");
     var content = withoutMeta.replace(/(^\/\*{1,3}\n?)|(\n?[ \t]{0,}\*\/$)/g, "").replace(/(^|\n)[ \t]{0,}\* ?/g, "\n").replace(/^\n/g, "");
@@ -109,14 +111,21 @@ var parseComment = function(param) {
         edited = edited.replaceAll(/import\(.*?\)\./g, "");
         return edited;
     });
-    var body = bodyRaw.replaceAll(/(\n@[A-Za-z].*)|(^@[A-Za-z].*\n)|(@[A-Za-z].*$)/g, "") || undefined;
+    var withoutJSDoc = bodyRaw.replaceAll(/(\n@[A-Za-z].*)|(^@[A-Za-z].*\n)|(@[A-Za-z].*$)/g, "") || "";
+    var accessors = _toConsumableArray(withoutJSDoc.matchAll(/^\s?- \`(.*)\`$/gm)).map(function(match) {
+        return match[1];
+    });
+    var withoutAccessors = withoutJSDoc.replace(/^\s?- \`(.*)\`$/gm, "").trim().replaceAll(/\n{3,}/g, "\n\n");
+    var body = withoutAccessors.trim() || undefined;
     var jsdoc = parseJSDocTags(jsdocTags);
     return {
-        name: name,
         priority: priority1,
         titleLevel: titleLevel1,
+        subsection: subsection,
+        name: name,
         title: title,
         body: body,
+        accessors: accessors,
         jsdoc: jsdoc
     };
 };

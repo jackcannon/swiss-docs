@@ -1,9 +1,12 @@
 import fsP from 'fs/promises';
 
-import { CmdOptions } from './types.js';
-import { findFiles } from './utils/findFiles.js';
 import { ArrayTools, MathsTools, PromiseTools, symbols } from 'swiss-ak';
+
+import { findFiles } from './utils/findFiles.js';
+import { write } from './utils/write.js';
 import { success, warn } from './utils/logs.js';
+
+import { CmdOptions } from './types.js';
 import { getStoredSegment } from './nameStore.js';
 
 export const runAlias = async (options: CmdOptions) => {
@@ -27,7 +30,7 @@ const readFile = async (file: string): Promise<string> => {
   return await fsP.readFile(file, 'utf8');
 };
 const writeFile = async (file: string, newContents: string): Promise<undefined> => {
-  await fsP.writeFile(file, newContents, 'utf8');
+  await write(file, newContents);
 };
 
 interface CommentInfo {
@@ -46,10 +49,11 @@ const getNewComment = ({ commentText }: CommentInfo): string => {
     return;
   }
 
+  const accessors = segment.accessors?.length ? '\n * \n' + [...(segment.accessors || '')].map((acc) => ` * - \`${acc}\``).join('\n') : '';
   const body = segment.body ? ['', '', ...(segment.body || '').split('\n')].join('\n * ') : '';
   const jsdocTags = segment.jsdoc?.allTags?.length ? ['', ...(segment.jsdoc.allTags || '')].join('\n * ') : '';
   const result = `/**<!-- DOCS-ALIAS: ${aliasName} -->
- * ${segment.title}${body}${jsdocTags}
+ * ${segment.title}${accessors}${body}${jsdocTags}
  */`;
 
   return result;

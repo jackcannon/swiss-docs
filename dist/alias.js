@@ -181,8 +181,9 @@ var __generator = this && this.__generator || function(thisArg, body) {
     }
 };
 import fsP from "fs/promises";
-import { findFiles } from "./utils/findFiles.js";
 import { ArrayTools, MathsTools, PromiseTools, symbols } from "swiss-ak";
+import { findFiles } from "./utils/findFiles.js";
+import { write } from "./utils/write.js";
 import { success, warn } from "./utils/logs.js";
 import { getStoredSegment } from "./nameStore.js";
 export var runAlias = function() {
@@ -250,7 +251,7 @@ var writeFile = function() {
                 case 0:
                     return [
                         4,
-                        fsP.writeFile(file, newContents, "utf8")
+                        write(file, newContents)
                     ];
                 case 1:
                     _state.sent();
@@ -266,13 +267,16 @@ var writeFile = function() {
 }();
 var getNewComment = function(param) {
     var commentText = param.commentText;
-    var _commentText_match, _segment_jsdoc, _segment_jsdoc_allTags;
+    var _commentText_match, _segment_accessors, _segment_jsdoc, _segment_jsdoc_allTags;
     var aliasName = (((_commentText_match = commentText.match(/<!-- ?DOCS-ALIAS: (.*?)-->/)) === null || _commentText_match === void 0 ? void 0 : _commentText_match[1]) || "").trim();
     var segment = getStoredSegment(aliasName);
     if (!segment) {
         warn("WARNING: Unable to find docs for '".concat(aliasName, "'"));
         return;
     }
+    var accessors = ((_segment_accessors = segment.accessors) === null || _segment_accessors === void 0 ? void 0 : _segment_accessors.length) ? "\n * \n" + _toConsumableArray(segment.accessors || "").map(function(acc) {
+        return " * - `".concat(acc, "`");
+    }).join("\n") : "";
     var body = segment.body ? [
         "",
         ""
@@ -280,7 +284,7 @@ var getNewComment = function(param) {
     var jsdocTags = ((_segment_jsdoc = segment.jsdoc) === null || _segment_jsdoc === void 0 ? void 0 : (_segment_jsdoc_allTags = _segment_jsdoc.allTags) === null || _segment_jsdoc_allTags === void 0 ? void 0 : _segment_jsdoc_allTags.length) ? [
         ""
     ].concat(_toConsumableArray(segment.jsdoc.allTags || "")).join("\n * ") : "";
-    var result = "/**<!-- DOCS-ALIAS: ".concat(aliasName, " -->\n * ").concat(segment.title).concat(body).concat(jsdocTags, "\n */");
+    var result = "/**<!-- DOCS-ALIAS: ".concat(aliasName, " -->\n * ").concat(segment.title).concat(accessors).concat(body).concat(jsdocTags, "\n */");
     return result;
 };
 var replaceComments = function(contents) {

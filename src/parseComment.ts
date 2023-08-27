@@ -1,5 +1,5 @@
 import { parseJSDocTags } from './parseJSDoc.js';
-import { DocSegment, FoundComment } from './types.js';
+import { Segment, FoundComment } from './types.js';
 
 const parseMeta = (comment: string, defaultPriority: number = 10000, defaultTitleLevel: number = 0) => {
   const [fullMeta, metaContent] = comment.match(/<!-- DOCS:(.*?)-->/);
@@ -15,16 +15,18 @@ const parseMeta = (comment: string, defaultPriority: number = 10000, defaultTitl
   const name = metaContent.match(/(^|\s)[A-Za-z-_.]+(\s|$)/g)?.[0].trim() || undefined;
   const priority = Number(metaContent.match(/-?[0-9]{1,}([.][0-9]{1,})?/g)?.[0] ?? defaultPriority);
   const titleLevel = (metaContent.match(/#+/g)?.[0] ?? '#'.repeat(defaultTitleLevel)).length;
+  const subsection = metaContent.includes('#!');
 
   return {
     fullMeta,
     name,
     priority,
-    titleLevel
+    titleLevel,
+    subsection
   };
 };
 
-const parseComment = ({ fileLevelComment, comment }: FoundComment): DocSegment => {
+const parseComment = ({ fileLevelComment, comment }: FoundComment): Segment => {
   let filePriority = undefined;
   let fileTitleLevel = undefined;
 
@@ -35,7 +37,7 @@ const parseComment = ({ fileLevelComment, comment }: FoundComment): DocSegment =
   }
 
   // parse the metadata
-  const { fullMeta, name, priority, titleLevel } = parseMeta(comment, filePriority, fileTitleLevel);
+  const { fullMeta, name, priority, titleLevel, subsection } = parseMeta(comment, filePriority, fileTitleLevel);
 
   // parse the content
   const withoutMeta = comment.replace(fullMeta, '');
@@ -57,16 +59,27 @@ const parseComment = ({ fileLevelComment, comment }: FoundComment): DocSegment =
 
       return edited;
     });
-  const body = bodyRaw.replaceAll(/(\n@[A-Za-z].*)|(^@[A-Za-z].*\n)|(@[A-Za-z].*$)/g, '') || undefined;
+
+  const withoutJSDoc = bodyRaw.replaceAll(/(\n@[A-Za-z].*)|(^@[A-Za-z].*\n)|(@[A-Za-z].*$)/g, '') || '';
+
+  const accessors = [...withoutJSDoc.matchAll(/^\s?- \`(.*)\`$/gm)].map((match) => match[1]);
+  const withoutAccessors = withoutJSDoc
+    .replace(/^\s?- \`(.*)\`$/gm, '')
+    .trim()
+    .replaceAll(/\n{3,}/g, '\n\n');
+
+  const body = withoutAccessors.trim() || undefined;
 
   const jsdoc = parseJSDocTags(jsdocTags);
 
   return {
-    name,
     priority,
     titleLevel,
+    subsection,
+    name,
     title,
     body,
+    accessors,
     jsdoc
   };
 };

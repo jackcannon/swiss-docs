@@ -8,6 +8,7 @@
     - [Values](#values)
       - [Name](#name)
       - [Header depth](#header-depth)
+        - [Subsection](#subsection)
       - [Priority Level](#priority-level)
     - [Definitions](#definitions)
       - [README](#readme)
@@ -22,7 +23,11 @@
     - [--jsdoc](#--jsdoc)
       - [Problems with some JSDoc comments not being updated](#problems-with-some-jsdoc-comments-not-being-updated)
 
-Here are the docs
+`swiss-docs` is a tool for extracting and updating certain JSDoc comments from a repo, and generating a structured, formatted README/markdown document.
+
+The principle is that documentation for a given function/item should not need to be duplicated/maintained in multiple locations, but in one place: in the code, alongside the item itself.
+
+By adding a small amount of meta tags and other small comments, the code becomes self documenting, with room for expansion, examples and more.
 
 ### Setup
 
@@ -58,11 +63,25 @@ Add a script to your package.json
 
 ### Values
 
+The following values can be combined in a single DOCS meta tag:
+
+```typescript
+/**<!-- DOCS: something ###! 10 -->
+ * Something
+ */
+```
+
 #### Name
 
 An optional unique name for identifying what the DOCS comment is for. Used for DOCS-ALIAS
 
 Names may contain letters (upper and lower cases), `-`, `_`, or `.`. They cannot contain numbers or spaces.
+
+```typescript
+/**<!-- DOCS: something -->
+ * Something
+ */
+```
 
 <p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
 
@@ -72,6 +91,30 @@ A number of `#` indicating what level of header to use for the first line of the
 
 Also set the depth of the item in the table of contents
 
+```typescript
+/**<!-- DOCS: ### -->
+ * Something
+ */
+```
+
+<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
+
+##### Subsection
+
+A subsection is a segment that has it's own table of contents. Any immediately following segments (after prioritisation) are shown in a mini table of contents under this segment's section of the README, and those 'child' sections are omitted from any Table of Contents that the subsection is shown in.
+
+Subsections may have subsections.
+
+This is a way of reducing the size of the main README table of contents, and dividing it into smaller TOCs throughout the README.
+
+You can indicate that this header is a 'subsection' by adding a `!` after the last `#` (e.g. `###!`).
+
+```typescript
+/**<!-- DOCS: ###! -->
+ * Something
+ */
+```
+
 <p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
 
 #### Priority Level
@@ -79,6 +122,15 @@ Also set the depth of the item in the table of contents
 A number to prioritise the order that comments are output in the markdown.
 
 Lower numbers are shown first
+
+```typescript
+/**<!-- DOCS: 20 -->
+ * Shown 2nd
+ */
+/**<!-- DOCS: 10 -->
+ * Shown 1st
+ */
+```
 
 <p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
 
@@ -108,7 +160,7 @@ Note: anything in these sections will be removed and replaced by the swiss-docs 
 
 #### File level
 
-This is sets the default values for the file. Everything after the file level defaults to the the values set in the file level definition.
+This sets the default values for the file. Everything after the file level defaults to the the values set in the file level definition.
 
 Multiple file level definitions can be used in the same file, splitting the defaults into sections
 
@@ -190,9 +242,9 @@ export declare const exampleFunc: () => void;
 export declare const egFunc: () => void;
 ```
 
-> NOTE: DOCS-ALIAS comments are not included in generated documentation.
+> WARNING: DOCS-ALIAS comments are not included in generated documentation.
 
-> NOTE: Is it suggested that you run `--alias [x]` on generated d.ts files, rather than source code.
+> WARNING: Is it suggested that you run `--alias [x]` on generated d.ts files, rather than source code.
 
 <p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
 
@@ -240,9 +292,9 @@ Alias: -j
 
 Update the JSDoc @ tags in the src files before running the docs.
 
-> Note: this will make changes to the original source files
+> WARNING: this will make changes to the original source files
 
-> Note: As each file is transpiled and processed by an external library, this can be very slow
+> WARNING: As each file is transpiled and processed by an external library, this can be very slow
 
 #### Problems with some JSDoc comments not being updated
 

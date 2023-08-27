@@ -8,6 +8,7 @@ import { exportAndSave } from './exportMarkdown.js';
 import { storeSegmentsInNameStore } from './nameStore.js';
 import { runAlias } from './alias.js';
 import { runJSDocUpdate } from './jsdoc.js';
+import { flattenTree } from './utils/treeUtils.js';
 import { CmdOptions } from 'types.js';
 
 const getValueDisplay = (value: any) => {
@@ -35,11 +36,11 @@ const run = async () => {
     }
 
     const foundComments = await findAllComments(opts);
-    const parsedComments = parseComments(foundComments);
+    const segmentsUnsorted = parseComments(foundComments);
 
-    storeSegmentsInNameStore(parsedComments);
+    storeSegmentsInNameStore(segmentsUnsorted);
 
-    const organised = organise(parsedComments);
+    const organised = organise(segmentsUnsorted);
 
     if (opts.output) {
       await exportAndSave(organised, opts);
