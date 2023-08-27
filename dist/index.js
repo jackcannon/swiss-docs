@@ -177,17 +177,18 @@ import { exportAndSave } from "./exportMarkdown.js";
 import { storeSegmentsInNameStore } from "./nameStore.js";
 import { runAlias } from "./alias.js";
 import { runJSDocUpdate } from "./jsdoc.js";
+import { coloredOut } from "./utils/coloredOut.js";
 var getValueDisplay = function(value) {
-    if (value === undefined) return "\x1b[90m[none]\x1b[39m";
-    if (value === true) return "\x1b[32mtrue\x1b[39m";
-    if (value === false) return "\x1b[90mfalse\x1b[39m";
-    return value;
+    if (value === undefined) return coloredOut.NONE("[none]");
+    if (value === true) return coloredOut.GREEN("true");
+    if (value === false) return coloredOut.NONE("false");
+    return coloredOut.REGULARVALUE(value + "");
 };
 var printOptions = function(opts) {
-    console.log("Running \x1b[1mswiss-docs\x1b[22m with options:");
+    console.log("".concat(coloredOut.HEADER("Running ")).concat(coloredOut.PACKAGENAME("swiss-node")).concat(coloredOut.HEADER(" with options:")));
     Object.entries(opts).forEach(function(param) {
         var _param = _slicedToArray(param, 2), key = _param[0], value = _param[1];
-        return console.log(" - ".concat(key, ": ").concat(getValueDisplay(value)));
+        return console.log("".concat(coloredOut.PROPNAME(" - ".concat(key, ":")), " ").concat(getValueDisplay(value)));
     });
     console.log("");
 };

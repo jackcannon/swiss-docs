@@ -8,19 +8,19 @@ import { exportAndSave } from './exportMarkdown.js';
 import { storeSegmentsInNameStore } from './nameStore.js';
 import { runAlias } from './alias.js';
 import { runJSDocUpdate } from './jsdoc.js';
-import { flattenTree } from './utils/treeUtils.js';
 import { CmdOptions } from 'types.js';
+import { coloredOut } from './utils/coloredOut.js';
 
 const getValueDisplay = (value: any) => {
-  if (value === undefined) return '\u001b[90m[none]\u001b[39m';
-  if (value === true) return '\u001b[32mtrue\u001b[39m';
-  if (value === false) return '\u001b[90mfalse\u001b[39m';
-  return value;
+  if (value === undefined) return coloredOut.NONE('[none]');
+  if (value === true) return coloredOut.GREEN('true');
+  if (value === false) return coloredOut.NONE('false');
+  return coloredOut.REGULARVALUE(value + '');
 };
 
 const printOptions = (opts: CmdOptions) => {
-  console.log('Running \u001b[1mswiss-docs\u001b[22m with options:');
-  Object.entries(opts).forEach(([key, value]) => console.log(` - ${key}: ${getValueDisplay(value)}`));
+  console.log(`${coloredOut.HEADER('Running ')}${coloredOut.PACKAGENAME('swiss-node')}${coloredOut.HEADER(' with options:')}`);
+  Object.entries(opts).forEach(([key, value]) => console.log(`${coloredOut.PROPNAME(` - ${key}:`)} ${getValueDisplay(value)}`));
   console.log('');
 };
 
