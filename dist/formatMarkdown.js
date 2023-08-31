@@ -30,6 +30,9 @@ var specialToken = "SUPERSECRETSPECIALCHARACTERFORSWISS123GOAWAYTHX";
 var getID = function(title) {
     return StringTools.toLowerSlugCase(title.replace(/[^A-Za-z0-9 ]/g, specialToken)).replaceAll(specialToken.toLowerCase(), "");
 };
+var inlineCode = function(text) {
+    return text.includes("`") ? "``" + (text.startsWith("`") ? " " : "") + text + (text.endsWith("`") ? " " : "") + "``" : "`" + text + "`";
+};
 var getTableOfContents = function(segments, opts, levelOffset) {
     var includeFirstLine = arguments.length > 3 && arguments[3] !== void 0 ? arguments[3] : false;
     var lines = segments.map(function(segment) {
@@ -105,10 +108,10 @@ var formatSegmentJSDoc = function(segment, opts, tree) {
             var typeOut = hasTypes && param.type && getParamTypeDisplay(param);
             return sanitise([
                 "*".concat(index).concat(param.isRestParam ? "…" : "", "*"),
-                "`" + param.name + "`",
+                inlineCode(param.name),
                 param.isOptional ? "*No*" : "**Yes**",
-                hasTypes ? param.type ? "`" + typeOut + "`" : "" : IGNORE,
-                hasDefaults ? (param.defaultValue ? "`" + param.defaultValue + "`" : "") || "" : IGNORE,
+                hasTypes ? param.type ? inlineCode(typeOut) : "" : IGNORE,
+                hasDefaults ? (param.defaultValue ? inlineCode(param.defaultValue) : "") || "" : IGNORE,
                 hasComments ? param.comment || "" : IGNORE
             ]);
         });
@@ -138,7 +141,7 @@ var formatSegmentJSDoc = function(segment, opts, tree) {
         var rows1 = [
             sanitise([
                 //
-                returns.type ? "`" + returns.type + "`" : "",
+                returns.type ? inlineCode(returns.type) : "",
                 hasComments1 ? returns.comment : IGNORE
             ])
         ];

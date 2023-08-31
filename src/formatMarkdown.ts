@@ -9,6 +9,9 @@ const specialToken = 'SUPERSECRETSPECIALCHARACTERFORSWISS123GOAWAYTHX';
 const getID = (title: string) =>
   StringTools.toLowerSlugCase(title.replace(/[^A-Za-z0-9 ]/g, specialToken)).replaceAll(specialToken.toLowerCase(), '');
 
+const inlineCode = (text: string) =>
+  text.includes('`') ? '``' + (text.startsWith('`') ? ' ' : '') + text + (text.endsWith('`') ? ' ' : '') + '``' : '`' + text + '`';
+
 const getTableOfContents = (segments: SegmentFlatList, opts: CmdOptions, levelOffset: number, includeFirstLine: boolean = false) => {
   const lines = segments.map((segment) => {
     const id = getID(segment.title);
@@ -73,10 +76,10 @@ const formatSegmentJSDoc = (segment: Segment, opts: CmdOptions, tree: SegmentTre
       const typeOut = hasTypes && param.type && getParamTypeDisplay(param);
       return sanitise([
         `*${index}${param.isRestParam ? '…' : ''}*`,
-        '`' + param.name + '`',
+        inlineCode(param.name),
         param.isOptional ? '*No*' : '**Yes**',
-        hasTypes ? (param.type ? '`' + typeOut + '`' : '') : IGNORE,
-        hasDefaults ? (param.defaultValue ? '`' + param.defaultValue + '`' : '') || '' : IGNORE,
+        hasTypes ? (param.type ? inlineCode(typeOut) : '') : IGNORE,
+        hasDefaults ? (param.defaultValue ? inlineCode(param.defaultValue) : '') || '' : IGNORE,
         hasComments ? param.comment || '' : IGNORE
       ]);
     });
@@ -108,7 +111,7 @@ const formatSegmentJSDoc = (segment: Segment, opts: CmdOptions, tree: SegmentTre
     const rows = [
       sanitise([
         //
-        returns.type ? '`' + returns.type + '`' : '',
+        returns.type ? inlineCode(returns.type) : '',
         hasComments ? returns.comment : IGNORE
       ])
     ];
