@@ -1,4 +1,4 @@
-import { fn } from 'swiss-ak';
+import { ArrayTools, fn } from 'swiss-ak';
 import { parseJSDocTags } from './parseJSDoc.js';
 import { Segment, FoundComment } from './types.js';
 
@@ -15,27 +15,18 @@ const parseMeta = (comment: string, defaultPriority: number = 10000, defaultTitl
 
   let split = metaContent.trim().split(' ').filter(fn.isTruthy);
 
-  // get 'name'
-  const name = split.find((item) => item.match(/^[A-Za-z-_.]/));
-  if (name) split = split.filter((item) => item !== name);
+  const name = ArrayTools.findAndRemove(split, (item) => item.match(/^[A-Za-z-_.]/));
 
-  // get 'priority'
-  const priorityItem = split.find((item) => item.match(/^[0-9-.]*$/));
+  const priorityItem = ArrayTools.findAndRemove(split, (item) => item.match(/^[0-9-.]*$/));
   const priority = Number(priorityItem || defaultPriority);
-  if (priorityItem) split = split.filter((item) => item !== priorityItem);
 
-  // get 'titleLevel'
-  const titleLevelItem = split.find((item) => item.match(/^#/));
+  const titleLevelItem = ArrayTools.findAndRemove(split, (item) => item.match(/^#/));
   const titleLevel = titleLevelItem ? titleLevelItem.split('#').length - 1 : defaultTitleLevel;
-  if (titleLevelItem) split = split.filter((item) => item !== titleLevelItem);
 
-  // get 'subsection'
   const subsection = Boolean(titleLevelItem && titleLevelItem.endsWith('!'));
 
-  // get 'allowJSDocUpdates'
-  const allowJSDocUpdatesItem = split.find((item) => item.match(/@/));
+  const allowJSDocUpdatesItem = ArrayTools.findAndRemove(split, (item) => item.match(/@/));
   const allowJSDocUpdates = Boolean(allowJSDocUpdatesItem);
-  if (allowJSDocUpdates) split = split.filter((item) => item !== allowJSDocUpdatesItem);
 
   return {
     fullMeta,
