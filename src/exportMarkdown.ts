@@ -10,6 +10,8 @@ export const exportAndSave = async (tree: SegmentTree, opts: CmdOptions) => {
   const template = await fsP.readFile(opts.template || opts.output, 'utf8');
   let output = template;
 
+  const flat = flattenTree(tree);
+
   const tags = [...template.match(/<!-- ?DOCS: ?(.*?) ?-->/g)].map((s) => s.replace(/<!-- ?DOCS: ?(.*?) ?-->/g, '$1').trim());
 
   const wantsTOC = tags.filter((tag) => tag.toUpperCase().includes('TOC')).length >= 2;
@@ -18,7 +20,7 @@ export const exportAndSave = async (tree: SegmentTree, opts: CmdOptions) => {
       // don't include segments with negative priority
       .filter((segment) => segment.priority >= 0);
 
-    const toc = formatPrimaryTOC(filteredSegments, opts, tree);
+    const toc = formatPrimaryTOC(filteredSegments, opts, tree, flat);
 
     const replacement = ['<!-- DOCS: TOC START -->', '', toc, '', '<!-- DOCS: TOC END -->'].join('\n');
 
@@ -27,10 +29,10 @@ export const exportAndSave = async (tree: SegmentTree, opts: CmdOptions) => {
 
   const wantsMain = tags.filter((tag) => tag.toUpperCase().includes('MAIN')).length >= 2;
   if (wantsMain) {
-    const filteredSegments = flattenTree(tree)
+    const filteredSegments = flat
       // don't include segments with negative priority
       .filter((segment) => segment.priority >= 0);
-    const main = formatMain(filteredSegments, opts, tree);
+    const main = formatMain(filteredSegments, opts, tree, flat);
     const replacement = ['<!-- DOCS: MAIN START -->', '', main, '', '<!-- DOCS: MAIN END -->'].join('\n');
 
     output = output.replace(/<!-- ?DOCS: ?(START MAIN|MAIN START) ?-->(.|\n)*?<!-- ?DOCS: ?(END MAIN|MAIN END) ?-->/gi, replacement);

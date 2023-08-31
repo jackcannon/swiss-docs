@@ -153,7 +153,7 @@ import { flattenTree } from "./utils/treeUtils.js";
 import { formatMain, formatPrimaryTOC } from "./formatMarkdown.js";
 export var exportAndSave = function() {
     var _ref = _asyncToGenerator(function(tree, opts) {
-        var template, output, tags, wantsTOC, filteredSegments, toc, replacement, wantsMain, filteredSegments1, main, replacement1;
+        var template, output, flat, tags, wantsTOC, filteredSegments, toc, replacement, wantsMain, filteredSegments1, main, replacement1;
         return __generator(this, function(_state) {
             switch(_state.label){
                 case 0:
@@ -164,6 +164,7 @@ export var exportAndSave = function() {
                 case 1:
                     template = _state.sent();
                     output = template;
+                    flat = flattenTree(tree);
                     tags = _toConsumableArray(template.match(/<!-- ?DOCS: ?(.*?) ?-->/g)).map(function(s) {
                         return s.replace(/<!-- ?DOCS: ?(.*?) ?-->/g, "$1").trim();
                     });
@@ -177,7 +178,7 @@ export var exportAndSave = function() {
                         .filter(function(segment) {
                             return segment.priority >= 0;
                         });
-                        toc = formatPrimaryTOC(filteredSegments, opts, tree);
+                        toc = formatPrimaryTOC(filteredSegments, opts, tree, flat);
                         replacement = [
                             "<!-- DOCS: TOC START -->",
                             "",
@@ -191,11 +192,11 @@ export var exportAndSave = function() {
                         return tag.toUpperCase().includes("MAIN");
                     }).length >= 2;
                     if (wantsMain) {
-                        filteredSegments1 = flattenTree(tree)// don't include segments with negative priority
+                        filteredSegments1 = flat// don't include segments with negative priority
                         .filter(function(segment) {
                             return segment.priority >= 0;
                         });
-                        main = formatMain(filteredSegments1, opts, tree);
+                        main = formatMain(filteredSegments1, opts, tree, flat);
                         replacement1 = [
                             "<!-- DOCS: MAIN START -->",
                             "",

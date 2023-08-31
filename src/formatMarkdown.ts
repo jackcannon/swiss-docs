@@ -6,15 +6,29 @@ import { CmdOptions, Segment, JSDocParam, SegmentFlatList, SegmentTree } from '.
 
 const specialToken = 'SUPERSECRETSPECIALCHARACTERFORSWISS123GOAWAYTHX';
 
-const getID = (title: string) =>
+const hasUniqueTitle = (segment: Segment, flat: SegmentFlatList) => {
+  const sameTitle = flat.find((s) => s !== segment && s.title === segment.title);
+  return !sameTitle;
+};
+
+const getSpecialIDFromName = (name: string) => name.replace(/[^A-Za-z0-9]/g, '_').toLowerCase();
+const getIDFromTitle = (title: string) =>
   StringTools.toLowerSlugCase(title.replace(/[^A-Za-z0-9 ]/g, specialToken)).replaceAll(specialToken.toLowerCase(), '');
 
 const inlineCode = (text: string) =>
   text.includes('`') ? '``' + (text.startsWith('`') ? ' ' : '') + text + (text.endsWith('`') ? ' ' : '') + '``' : '`' + text + '`';
 
-const getTableOfContents = (segments: SegmentFlatList, opts: CmdOptions, levelOffset: number, includeFirstLine: boolean = false) => {
+const getTableOfContents = (
+  segments: SegmentFlatList,
+  opts: CmdOptions,
+  levelOffset: number,
+  includeFirstLine: boolean = false,
+  flat: SegmentFlatList
+) => {
   const lines = segments.map((segment) => {
-    const id = getID(segment.title);
+    const isUnique = hasUniqueTitle(segment, flat);
+    const id = isUnique ? getIDFromTitle(segment.title) : getSpecialIDFromName(segment.name);
+
     const indent = '  '.repeat(segment.titleLevel - levelOffset);
     const titleOut = segment.subsection || segment.children?.length ? `**${segment.title}**` : segment.title;
     const link = `[${titleOut}](#${id})`;
@@ -29,25 +43,31 @@ const getTableOfContents = (segments: SegmentFlatList, opts: CmdOptions, levelOf
   return output;
 };
 
-export const formatPrimaryTOC = (segments: SegmentFlatList, opts: CmdOptions, tree: SegmentTree): string =>
-  getTableOfContents(segments, opts, 0, true);
+export const formatPrimaryTOC = (segments: SegmentFlatList, opts: CmdOptions, tree: SegmentTree, flat: SegmentFlatList): string =>
+  getTableOfContents(segments, opts, 0, true, flat);
 
 const getParamTypeDisplay = (param: JSDocParam) => (param.isRestParam ? param.type.replace(/^\.\.\./, '') + '[]' : param.type);
 
-const formatSegmentTitle = (segment: Segment, opts: CmdOptions, tree: SegmentTree) => {
-  return `${'#'.repeat(segment.titleLevel)} ${segment.title}`;
+const formatSegmentTitle = (segment: Segment, opts: CmdOptions, tree: SegmentTree, flat: SegmentFlatList) => {
+  const isUnique = hasUniqueTitle(segment, flat);
+  const hashes = '#'.repeat(segment.titleLevel);
+  if (isUnique) {
+    return `${hashes} ${segment.title}`;
+  } else {
+    return `${hashes} <span id="${getSpecialIDFromName(segment.name)}">${segment.title}</span>`;
+  }
 };
 
-const formatSegmentTOC = (segment: Segment, opts: CmdOptions, tree: SegmentTree) => {
+const formatSegmentTOC = (segment: Segment, opts: CmdOptions, tree: SegmentTree, flat: SegmentFlatList) => {
   const childSegments = flattenTree(segment.children || [], (segment) => segment.subsection);
-  const toc = getTableOfContents([segment, ...childSegments], opts, Math.max(0, segment.titleLevel - 1), false);
+  const toc = getTableOfContents([segment, ...childSegments], opts, Math.max(0, segment.titleLevel - 1), false, flat);
   return '\n' + toc + '\n';
 };
-const formatSegmentBody = (segment: Segment, opts: CmdOptions, tree: SegmentTree) => {
+const formatSegmentBody = (segment: Segment, opts: CmdOptions, tree: SegmentTree, flat: SegmentFlatList) => {
   const body = segment.body;
   return '\n' + body + '\n';
 };
-const formatSegmentJSDoc = (segment: Segment, opts: CmdOptions, tree: SegmentTree) => {
+const formatSegmentJSDoc = (segment: Segment, opts: CmdOptions, tree: SegmentTree, flat: SegmentFlatList) => {
   let output = '';
 
   const { params, returns } = segment.jsdoc;
@@ -121,7 +141,7 @@ const formatSegmentJSDoc = (segment: Segment, opts: CmdOptions, tree: SegmentTre
   }
   return output;
 };
-const formatSegmentSignature = (segment: Segment, opts: CmdOptions, tree: SegmentTree) => {
+const formatSegmentSignature = (segment: Segment, opts: CmdOptions, tree: SegmentTree, flat: SegmentFlatList) => {
   const accessors = segment.accessors.length ? segment.accessors : [segment.name];
 
   let section: string = '';
@@ -142,13 +162,13 @@ const formatSegmentSignature = (segment: Segment, opts: CmdOptions, tree: Segmen
 
   return '\n\n```typescript\n' + section + '\n```\n';
 };
-const formatSegmentBackToX = (segment: Segment, opts: CmdOptions, tree: SegmentTree) => {
+const formatSegmentBackToX = (segment: Segment, opts: CmdOptions, tree: SegmentTree, flat: SegmentFlatList) => {
   const target = findAncestorSubsection(tree, segment);
 
   let targetURL = '#';
   let targetName = 'top';
   if (target) {
-    targetURL = '#' + getID(target.title);
+    targetURL = '#' + getIDFromTitle(target.title);
     targetName = `<b>${target.title}</b>`;
   }
 
@@ -156,7 +176,7 @@ const formatSegmentBackToX = (segment: Segment, opts: CmdOptions, tree: SegmentT
   return backToX;
 };
 
-const formatMainSegment = (segment: Segment, opts: CmdOptions, tree: SegmentTree): string => {
+const formatMainSegment = (segment: Segment, opts: CmdOptions, tree: SegmentTree, flat: SegmentFlatList): string => {
   let output = '';
 
   const showBody = !!(segment.body !== undefined && segment.body !== '');
@@ -164,16 +184,16 @@ const formatMainSegment = (segment: Segment, opts: CmdOptions, tree: SegmentTree
   const showTOC = segment.subsection && segment.children?.length;
   const showSignature = segment.accessors.length;
 
-  output += formatSegmentTitle(segment, opts, tree);
-  if (showSignature) output += formatSegmentSignature(segment, opts, tree);
-  if (showBody) output += formatSegmentBody(segment, opts, tree);
-  if (showTOC) output += formatSegmentTOC(segment, opts, tree);
-  if (showJSDoc) output += formatSegmentJSDoc(segment, opts, tree);
-  if (showBody || showJSDoc || showTOC) output += formatSegmentBackToX(segment, opts, tree);
+  output += formatSegmentTitle(segment, opts, tree, flat);
+  if (showSignature) output += formatSegmentSignature(segment, opts, tree, flat);
+  if (showBody) output += formatSegmentBody(segment, opts, tree, flat);
+  if (showTOC) output += formatSegmentTOC(segment, opts, tree, flat);
+  if (showJSDoc) output += formatSegmentJSDoc(segment, opts, tree, flat);
+  if (showBody || showJSDoc || showTOC) output += formatSegmentBackToX(segment, opts, tree, flat);
 
   return output;
 };
 
-export const formatMain = (segments: SegmentFlatList, opts: CmdOptions, tree: SegmentTree): string => {
-  return segments.map((segment) => formatMainSegment(segment, opts, tree)).join('\n\n');
+export const formatMain = (segments: SegmentFlatList, opts: CmdOptions, tree: SegmentTree, flat: SegmentFlatList): string => {
+  return segments.map((segment) => formatMainSegment(segment, opts, tree, flat)).join('\n\n');
 };
