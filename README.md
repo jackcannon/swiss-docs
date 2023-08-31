@@ -10,6 +10,7 @@
       - [Header depth](#header-depth)
         - [Subsection](#subsection)
       - [Priority Level](#priority-level)
+      - [Allow JSDoc Updates](#allow-jsdoc-updates)
     - [Definitions](#definitions)
       - [README](#readme)
       - [File level](#file-level)
@@ -75,7 +76,7 @@ The following values can be combined in a single DOCS meta tag:
 
 An optional unique name for identifying what the DOCS comment is for. Used for DOCS-ALIAS
 
-Names may contain letters (upper and lower cases), `-`, `_`, or `.`. They cannot contain numbers or spaces.
+Names may contain letters (upper and lower cases), numbers, `-`, `_`, or `.`. They cannot contain spaces, and cannot start with a number.
 
 ```typescript
 /**<!-- DOCS: something -->
@@ -130,6 +131,21 @@ Lower numbers are shown first
 /**<!-- DOCS: 10 -->
  * Shown 1st
  */
+```
+
+<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
+
+#### Allow JSDoc Updates
+
+Adding a single `@` (with spacing either side) in the meta tag will indicate that this comment is okay to be updated by the `--jsdoc` process.
+
+```typescript
+/**<!-- DOCS: @ -->
+ * someFunc
+ *
+ * You can run --jsdoc, and I'll update
+ */
+const someFunc = (param: number): number => 1;
 ```
 
 <p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>

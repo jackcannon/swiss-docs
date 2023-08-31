@@ -57,6 +57,8 @@ function _unsupportedIterableToArray(o, minLen) {
     if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen);
 }
 import { ArrayTools } from "swiss-ak";
+import { coloredOut } from "./utils/coloredOut.js";
+var DEBUG_NAMES = true;
 var organiseSort = function(segments) {
     // 'sort' by priority, maintaining original order for equal priorities
     var groups = ArrayTools.group(segments, function(c) {
@@ -75,7 +77,7 @@ var recursiveChildAdopter = function(list, depthOld) {
     var items = list.filter(function(item) {
         return item.titleLevel === depth;
     });
-    if (list.indexOf(items[0]) !== 0) {
+    if (items.length && list.indexOf(items[0]) !== 0) {
         // Sometimes it jumps 2 levels, but we don't want to lose the first item
         items.unshift(list[0]);
     }
@@ -108,10 +110,27 @@ var organiseNest = function(segments) {
     var shown = segments.filter(function(item) {
         return item.priority >= 0;
     });
-    return _toConsumableArray(nestList(notShown)).concat(_toConsumableArray(nestList(shown)));
+    var notShownNested = nestList(notShown);
+    var shownNested = nestList(shown);
+    return _toConsumableArray(notShownNested).concat(_toConsumableArray(shownNested));
 };
 export var organise = function(segments) {
     var sorted = organiseSort(segments);
+    if (DEBUG_NAMES) {
+        var noNames = sorted.filter(function(param) {
+            var name = param.name;
+            return !name;
+        });
+        if (noNames.length) {
+            console.log(coloredOut.BOLD(coloredOut.YELLOW("  Segments without names:")));
+            var pwd = process.cwd();
+            noNames.forEach(function(param) {
+                var title = param.title, file = param.file;
+                console.log(coloredOut.YELLOW("   - ".concat(title)), coloredOut.NONE("(".concat(file.replace(pwd, "."), ")")));
+            });
+            console.log("");
+        }
+    }
     var nested = organiseNest(sorted);
     return nested;
 };

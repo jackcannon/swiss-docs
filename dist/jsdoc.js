@@ -203,9 +203,14 @@ import { write } from "./utils/write.js";
 import { warn } from "./utils/logs.js";
 import { parseComments } from "./parseComment.js";
 import { findCommentsInText, findSrcFiles } from "./find.js";
+import { coloredOut } from "./utils/coloredOut.js";
+var DEBUG_JSDOC = false;
+var debug = function(message) {
+    if (DEBUG_JSDOC) console.log(coloredOut.PROPNAME(message));
+};
 export var runJSDocUpdate = function() {
     var _ref = _asyncToGenerator(function(opts) {
-        var allFiles, progressBar;
+        var allFiles, useFiles, progressBar, concurrentLimit;
         return __generator(this, function(_state) {
             switch(_state.label){
                 case 0:
@@ -215,13 +220,17 @@ export var runJSDocUpdate = function() {
                     ];
                 case 1:
                     allFiles = _state.sent();
-                    progressBar = getProgressBar(allFiles.length, {
+                    useFiles = allFiles;
+                    //.filter((file) => file.includes('lineCounter.ts'));
+                    if (DEBUG_JSDOC) console.log(useFiles);
+                    progressBar = getProgressBar(useFiles.length, {
                         prefix: " Updating JSDocs "
                     });
                     progressBar.start();
+                    concurrentLimit = DEBUG_JSDOC ? 1 : 8;
                     return [
                         4,
-                        PromiseTools.eachLimit(8, allFiles, function() {
+                        PromiseTools.eachLimit(concurrentLimit, useFiles, function() {
                             var _ref = _asyncToGenerator(function(file) {
                                 return __generator(this, function(_state) {
                                     switch(_state.label){
@@ -358,10 +367,18 @@ var pairUpComments = function(originalComments, transpiledComments) {
 };
 var updateSingleFile = function() {
     var _ref = _asyncToGenerator(function(file) {
-        var original, preEdited, transpiled, originalComments, transpiledComments, pairs, rows, output;
+        var original, originalComments, preEdited, transpiled, transpiledComments, pairs, rows, output, e;
         return __generator(this, function(_state) {
             switch(_state.label){
                 case 0:
+                    _state.trys.push([
+                        0,
+                        7,
+                        ,
+                        8
+                    ]);
+                    debug("");
+                    debug("  " + file);
                     return [
                         4,
                         fsP.readFile(file, "utf8")
@@ -370,33 +387,46 @@ var updateSingleFile = function() {
                     original = _state.sent();
                     return [
                         4,
-                        preEditFileText(original)
+                        getParsedComments(original, file)
                     ];
                 case 2:
+                    originalComments = _state.sent().filter(function(segment) {
+                        return segment.allowJSDocUpdates;
+                    });
+                    if (originalComments.length === 0) {
+                        debug("      - no comments with allowJSDocUpdates enabled found");
+                        return [
+                            2
+                        ];
+                    }
+                    debug("      - before transpile");
+                    return [
+                        4,
+                        preEditFileText(original)
+                    ];
+                case 3:
                     preEdited = _state.sent();
                     return [
                         4,
                         transpile(preEdited)
                     ];
-                case 3:
-                    transpiled = _state.sent();
-                    return [
-                        4,
-                        getParsedComments(original, file)
-                    ];
                 case 4:
-                    originalComments = _state.sent();
+                    transpiled = _state.sent();
                     return [
                         4,
                         getParsedComments(transpiled, file)
                     ];
                 case 5:
                     transpiledComments = _state.sent();
+                    debug("      - after transpile");
+                    debug("      - before pair");
                     pairs = pairUpComments(originalComments, transpiledComments);
+                    debug("      - after pair");
                     rows = [];
                     output = original;
-                    pairs.forEach(function(param) {
+                    pairs.forEach(function(param, index) {
                         var _param = _slicedToArray(param, 2), originalComment = _param[0], transpiledComment = _param[1];
+                        debug("      - handling pair ".concat(index + 1, "/").concat(pairs.length));
                         if (!originalComment || !transpiledComment) {
                             warn("Comment not found in transpiled file: ".concat((originalComment === null || originalComment === void 0 ? void 0 : originalComment.name) || (originalComment === null || originalComment === void 0 ? void 0 : originalComment.title) || (transpiledComment === null || transpiledComment === void 0 ? void 0 : transpiledComment.name) || (transpiledComment === null || transpiledComment === void 0 ? void 0 : transpiledComment.title)));
                         }
@@ -411,15 +441,32 @@ var updateSingleFile = function() {
                                 output = output.replace(originalComment.comment, postEdited);
                             }
                         } catch (e) {
-                        // do nothing
+                            // do nothing
+                            if (DEBUG_JSDOC) console.error(coloredOut.RED("ERROR"), e);
                         }
                     });
+                    debug("      - before write");
                     return [
                         4,
                         write(file, output)
                     ];
                 case 6:
                     _state.sent();
+                    debug("      - after write");
+                    debug("");
+                    debug("");
+                    return [
+                        3,
+                        8
+                    ];
+                case 7:
+                    e = _state.sent();
+                    if (DEBUG_JSDOC) console.error(coloredOut.RED("ERROR"), e);
+                    return [
+                        3,
+                        8
+                    ];
+                case 8:
                     return [
                         2
                     ];

@@ -148,6 +148,7 @@ export var write = function() {
                     ];
             }
         });
+    // await fsP.writeFile(file, output, 'utf8');
     });
     return function write(file, output) {
         return _ref.apply(this, arguments);

@@ -228,7 +228,7 @@ export var findCommentsInText = function() {
                 var _param = _slicedToArray(param, 1), index = _param[0];
                 return index;
             }, fn.desc);
-            javadocComments = _toConsumableArray(text.match(/\/\*{1,3}(.|\n)*?\s\*\//g) || []);
+            javadocComments = _toConsumableArray(text.match(/\/\*{1,3}(.|\n)*?\s?\*\//g) || []);
             withMeta = javadocComments.filter(function(comment) {
                 return comment.match(/<!-- ?DOCS: .*?-->/);
             });

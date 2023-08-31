@@ -9,16 +9,29 @@ import { warn } from './utils/logs.js';
 import { CmdOptions, CombinedComment } from './types.js';
 import { parseComments } from './parseComment.js';
 import { findCommentsInText, findSrcFiles } from './find.js';
+import { coloredOut } from './utils/coloredOut.js';
+
+const DEBUG_JSDOC = false;
+const debug = (message: string) => {
+  if (DEBUG_JSDOC) console.log(coloredOut.PROPNAME(message));
+};
 
 export const runJSDocUpdate = async (opts: CmdOptions) => {
   const allFiles = await findSrcFiles(opts);
 
-  const progressBar = getProgressBar(allFiles.length, {
+  const useFiles = allFiles;
+  //.filter((file) => file.includes('lineCounter.ts'));
+
+  if (DEBUG_JSDOC) console.log(useFiles);
+
+  const progressBar = getProgressBar(useFiles.length, {
     prefix: ' Updating JSDocs '
   });
   progressBar.start();
 
-  await PromiseTools.eachLimit(8, allFiles, async (file) => {
+  const concurrentLimit = DEBUG_JSDOC ? 1 : 8;
+
+  await PromiseTools.eachLimit(concurrentLimit, useFiles, async (file) => {
     await updateSingleFile(file);
     progressBar.next();
   });
@@ -89,41 +102,64 @@ const pairUpComments = (originalComments: CombinedComment[], transpiledComments:
 };
 
 const updateSingleFile = async (file: string) => {
-  const original = await fsP.readFile(file, 'utf8');
-  const preEdited = await preEditFileText(original);
-  const transpiled = await transpile(preEdited);
+  try {
+    debug('');
+    debug('  ' + file);
 
-  const originalComments = await getParsedComments(original, file);
-  const transpiledComments = await getParsedComments(transpiled, file);
+    const original = await fsP.readFile(file, 'utf8');
+    const originalComments = (await getParsedComments(original, file)).filter((segment) => segment.allowJSDocUpdates);
 
-  const pairs = pairUpComments(originalComments, transpiledComments);
-
-  const rows: string[][] = [];
-
-  let output = original;
-
-  pairs.forEach(([originalComment, transpiledComment]) => {
-    if (!originalComment || !transpiledComment) {
-      warn(
-        `Comment not found in transpiled file: ${
-          originalComment?.name || originalComment?.title || transpiledComment?.name || transpiledComment?.title
-        }`
-      );
+    if (originalComments.length === 0) {
+      debug('      - no comments with allowJSDocUpdates enabled found');
+      return;
     }
 
-    try {
-      const postEdited = postEditComment(transpiledComment.comment, originalComment.comment);
+    debug('      - before transpile');
+    const preEdited = await preEditFileText(original);
+    const transpiled = await transpile(preEdited);
+    const transpiledComments = await getParsedComments(transpiled, file);
+    debug('      - after transpile');
 
-      rows.push([originalComment.comment, postEdited]);
+    debug('      - before pair');
+    const pairs = pairUpComments(originalComments, transpiledComments);
+    debug('      - after pair');
 
-      // matches all the relevant props
-      if (originalComment.comment !== postEdited) {
-        output = output.replace(originalComment.comment, postEdited);
+    const rows: string[][] = [];
+
+    let output = original;
+
+    pairs.forEach(([originalComment, transpiledComment], index) => {
+      debug(`      - handling pair ${index + 1}/${pairs.length}`);
+      if (!originalComment || !transpiledComment) {
+        warn(
+          `Comment not found in transpiled file: ${
+            originalComment?.name || originalComment?.title || transpiledComment?.name || transpiledComment?.title
+          }`
+        );
       }
-    } catch (e) {
-      // do nothing
-    }
-  });
 
-  await write(file, output);
+      try {
+        const postEdited = postEditComment(transpiledComment.comment, originalComment.comment);
+
+        rows.push([originalComment.comment, postEdited]);
+
+        // matches all the relevant props
+        if (originalComment.comment !== postEdited) {
+          output = output.replace(originalComment.comment, postEdited);
+        }
+      } catch (e) {
+        // do nothing
+        if (DEBUG_JSDOC) console.error(coloredOut.RED('ERROR'), e);
+      }
+    });
+
+    debug('      - before write');
+    await write(file, output);
+    debug('      - after write');
+
+    debug('');
+    debug('');
+  } catch (e) {
+    if (DEBUG_JSDOC) console.error(coloredOut.RED('ERROR'), e);
+  }
 };

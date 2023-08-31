@@ -166,7 +166,7 @@ const formatMainSegment = (segment: Segment, opts: CmdOptions, tree: SegmentTree
   if (showBody) output += formatSegmentBody(segment, opts, tree);
   if (showTOC) output += formatSegmentTOC(segment, opts, tree);
   if (showJSDoc) output += formatSegmentJSDoc(segment, opts, tree);
-  if (showBody || showJSDoc) output += formatSegmentBackToX(segment, opts, tree);
+  if (showBody || showJSDoc || showTOC) output += formatSegmentBackToX(segment, opts, tree);
 
   return output;
 };

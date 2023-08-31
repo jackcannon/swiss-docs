@@ -56,10 +56,10 @@ function _unsupportedIterableToArray(o, minLen) {
     if (n === "Map" || n === "Set") return Array.from(n);
     if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen);
 }
+import { fn } from "swiss-ak";
 import { parseJSDocTags } from "./parseJSDoc.js";
 var parseMeta = function(comment) {
     var defaultPriority = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : 10000, defaultTitleLevel = arguments.length > 2 && arguments[2] !== void 0 ? arguments[2] : 0;
-    var _metaContent_match, _metaContent_match1, _metaContent_match2;
     var _comment_match = _slicedToArray(comment.match(/<!-- DOCS:(.*?)-->/), 2), fullMeta = _comment_match[0], metaContent = _comment_match[1];
     if (!metaContent) {
         return {
@@ -68,22 +68,51 @@ var parseMeta = function(comment) {
             titleLevel: defaultTitleLevel
         };
     }
-    var name = ((_metaContent_match = metaContent.match(/(^|\s)[A-Za-z-_.]+(\s|$)/g)) === null || _metaContent_match === void 0 ? void 0 : _metaContent_match[0].trim()) || undefined;
-    var _metaContent_match_;
-    var priority = Number((_metaContent_match_ = (_metaContent_match1 = metaContent.match(/-?[0-9]{1,}([.][0-9]{1,})?/g)) === null || _metaContent_match1 === void 0 ? void 0 : _metaContent_match1[0]) !== null && _metaContent_match_ !== void 0 ? _metaContent_match_ : defaultPriority);
-    var _metaContent_match_1;
-    var titleLevel = ((_metaContent_match_1 = (_metaContent_match2 = metaContent.match(/#+/g)) === null || _metaContent_match2 === void 0 ? void 0 : _metaContent_match2[0]) !== null && _metaContent_match_1 !== void 0 ? _metaContent_match_1 : "#".repeat(defaultTitleLevel)).length;
-    var subsection = metaContent.includes("#!");
+    var split = metaContent.trim().split(" ").filter(fn.isTruthy);
+    // get 'name'
+    var name = split.find(function(item) {
+        return item.match(/^[A-Za-z-_.]/);
+    });
+    if (name) split = split.filter(function(item) {
+        return item !== name;
+    });
+    // get 'priority'
+    var priorityItem = split.find(function(item) {
+        return item.match(/^[0-9-.]*$/);
+    });
+    var priority = Number(priorityItem || defaultPriority);
+    if (priorityItem) split = split.filter(function(item) {
+        return item !== priorityItem;
+    });
+    // get 'titleLevel'
+    var titleLevelItem = split.find(function(item) {
+        return item.match(/^#/);
+    });
+    var titleLevel = titleLevelItem ? titleLevelItem.split("#").length - 1 : defaultTitleLevel;
+    if (titleLevelItem) split = split.filter(function(item) {
+        return item !== titleLevelItem;
+    });
+    // get 'subsection'
+    var subsection = Boolean(titleLevelItem && titleLevelItem.endsWith("!"));
+    // get 'allowJSDocUpdates'
+    var allowJSDocUpdatesItem = split.find(function(item) {
+        return item.match(/@/);
+    });
+    var allowJSDocUpdates = Boolean(allowJSDocUpdatesItem);
+    if (allowJSDocUpdates) split = split.filter(function(item) {
+        return item !== allowJSDocUpdatesItem;
+    });
     return {
         fullMeta: fullMeta,
         name: name,
         priority: priority,
         titleLevel: titleLevel,
-        subsection: subsection
+        subsection: subsection,
+        allowJSDocUpdates: allowJSDocUpdates
     };
 };
 var parseComment = function(param) {
-    var fileLevelComment = param.fileLevelComment, comment = param.comment;
+    var file = param.file, fileLevelComment = param.fileLevelComment, comment = param.comment;
     var filePriority = undefined;
     var fileTitleLevel = undefined;
     if (fileLevelComment) {
@@ -92,7 +121,7 @@ var parseComment = function(param) {
         fileTitleLevel = titleLevel;
     }
     // parse the metadata
-    var _parseMeta1 = parseMeta(comment, filePriority, fileTitleLevel), fullMeta = _parseMeta1.fullMeta, name = _parseMeta1.name, priority1 = _parseMeta1.priority, titleLevel1 = _parseMeta1.titleLevel, subsection = _parseMeta1.subsection;
+    var _parseMeta1 = parseMeta(comment, filePriority, fileTitleLevel), fullMeta = _parseMeta1.fullMeta, name = _parseMeta1.name, priority1 = _parseMeta1.priority, titleLevel1 = _parseMeta1.titleLevel, subsection = _parseMeta1.subsection, allowJSDocUpdates = _parseMeta1.allowJSDocUpdates;
     // parse the content
     var withoutMeta = comment.replace(fullMeta, "");
     var content = withoutMeta.replace(/(^\/\*{1,3}\n?)|(\n?[ \t]{0,}\*\/$)/g, "").replace(/(^|\n)[ \t]{0,}\* ?/g, "\n").replace(/^\n/g, "");
@@ -119,9 +148,11 @@ var parseComment = function(param) {
     var body = withoutAccessors.trim() || undefined;
     var jsdoc = parseJSDocTags(jsdocTags);
     return {
+        file: file,
         priority: priority1,
         titleLevel: titleLevel1,
         subsection: subsection,
+        allowJSDocUpdates: allowJSDocUpdates,
         name: name,
         title: title,
         body: body,

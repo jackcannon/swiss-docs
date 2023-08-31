@@ -1,3 +1,4 @@
+import { fn } from 'swiss-ak';
 import { parseJSDocTags } from './parseJSDoc.js';
 import { Segment, FoundComment } from './types.js';
 
@@ -12,21 +13,41 @@ const parseMeta = (comment: string, defaultPriority: number = 10000, defaultTitl
     };
   }
 
-  const name = metaContent.match(/(^|\s)[A-Za-z-_.]+(\s|$)/g)?.[0].trim() || undefined;
-  const priority = Number(metaContent.match(/-?[0-9]{1,}([.][0-9]{1,})?/g)?.[0] ?? defaultPriority);
-  const titleLevel = (metaContent.match(/#+/g)?.[0] ?? '#'.repeat(defaultTitleLevel)).length;
-  const subsection = metaContent.includes('#!');
+  let split = metaContent.trim().split(' ').filter(fn.isTruthy);
+
+  // get 'name'
+  const name = split.find((item) => item.match(/^[A-Za-z-_.]/));
+  if (name) split = split.filter((item) => item !== name);
+
+  // get 'priority'
+  const priorityItem = split.find((item) => item.match(/^[0-9-.]*$/));
+  const priority = Number(priorityItem || defaultPriority);
+  if (priorityItem) split = split.filter((item) => item !== priorityItem);
+
+  // get 'titleLevel'
+  const titleLevelItem = split.find((item) => item.match(/^#/));
+  const titleLevel = titleLevelItem ? titleLevelItem.split('#').length - 1 : defaultTitleLevel;
+  if (titleLevelItem) split = split.filter((item) => item !== titleLevelItem);
+
+  // get 'subsection'
+  const subsection = Boolean(titleLevelItem && titleLevelItem.endsWith('!'));
+
+  // get 'allowJSDocUpdates'
+  const allowJSDocUpdatesItem = split.find((item) => item.match(/@/));
+  const allowJSDocUpdates = Boolean(allowJSDocUpdatesItem);
+  if (allowJSDocUpdates) split = split.filter((item) => item !== allowJSDocUpdatesItem);
 
   return {
     fullMeta,
     name,
     priority,
     titleLevel,
-    subsection
+    subsection,
+    allowJSDocUpdates
   };
 };
 
-const parseComment = ({ fileLevelComment, comment }: FoundComment): Segment => {
+const parseComment = ({ file, fileLevelComment, comment }: FoundComment): Segment => {
   let filePriority = undefined;
   let fileTitleLevel = undefined;
 
@@ -37,7 +58,7 @@ const parseComment = ({ fileLevelComment, comment }: FoundComment): Segment => {
   }
 
   // parse the metadata
-  const { fullMeta, name, priority, titleLevel, subsection } = parseMeta(comment, filePriority, fileTitleLevel);
+  const { fullMeta, name, priority, titleLevel, subsection, allowJSDocUpdates } = parseMeta(comment, filePriority, fileTitleLevel);
 
   // parse the content
   const withoutMeta = comment.replace(fullMeta, '');
@@ -73,9 +94,11 @@ const parseComment = ({ fileLevelComment, comment }: FoundComment): Segment => {
   const jsdoc = parseJSDocTags(jsdocTags);
 
   return {
+    file,
     priority,
     titleLevel,
     subsection,
+    allowJSDocUpdates,
     name,
     title,
     body,

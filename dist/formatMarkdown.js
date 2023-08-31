@@ -193,7 +193,7 @@ var formatMainSegment = function(segment, opts, tree) {
     if (showBody) output += formatSegmentBody(segment, opts, tree);
     if (showTOC) output += formatSegmentTOC(segment, opts, tree);
     if (showJSDoc) output += formatSegmentJSDoc(segment, opts, tree);
-    if (showBody || showJSDoc) output += formatSegmentBackToX(segment, opts, tree);
+    if (showBody || showJSDoc || showTOC) output += formatSegmentBackToX(segment, opts, tree);
     return output;
 };
 export var formatMain = function(segments, opts, tree) {

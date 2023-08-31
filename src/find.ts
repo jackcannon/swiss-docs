@@ -19,7 +19,7 @@ export const findCommentsInText = async (text: string, file: string): Promise<Fo
   fileLevelDefinitions = ArrayTools.sortByMapped(fileLevelDefinitions, ([index]) => index, fn.desc);
 
   // find all javadoc comments
-  const javadocComments = [...(text.match(/\/\*{1,3}(.|\n)*?\s\*\//g) || [])];
+  const javadocComments = [...(text.match(/\/\*{1,3}(.|\n)*?\s?\*\//g) || [])];
 
   // only include comments that have a meta tag
   const withMeta = javadocComments.filter((comment) => comment.match(/<!-- ?DOCS: .*?-->/));

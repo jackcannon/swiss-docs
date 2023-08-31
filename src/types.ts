@@ -97,9 +97,11 @@ export interface JSDocInfo {
 }
 
 export interface Segment {
+  file: string;
   priority: number;
   titleLevel: number;
   subsection: boolean; // whether to have own table of contents
+  allowJSDocUpdates: boolean; // whether to allow JSDoc updates
   name?: string;
   title: string;
   body: string;
