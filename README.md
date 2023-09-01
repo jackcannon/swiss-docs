@@ -76,7 +76,7 @@ The following values can be combined in a single DOCS meta tag:
 
 An optional unique name for identifying what the DOCS comment is for. Used for DOCS-ALIAS
 
-Names may contain letters (upper and lower cases), numbers, `-`, `_`, or `.`. They cannot contain spaces, and cannot start with a number.
+Names may contain letters (upper and lower cases), numbers, `-`, `_`, or `.`. They cannot contain spaces, and has to start with a letter or `_`.
 
 ```typescript
 /**<!-- DOCS: something -->

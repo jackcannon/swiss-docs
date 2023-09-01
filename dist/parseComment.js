@@ -56,7 +56,7 @@ function _unsupportedIterableToArray(o, minLen) {
     if (n === "Map" || n === "Set") return Array.from(n);
     if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen);
 }
-import { fn } from "swiss-ak";
+import { ArrayTools, fn } from "swiss-ak";
 import { parseJSDocTags } from "./parseJSDoc.js";
 var parseMeta = function(comment) {
     var defaultPriority = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : 10000, defaultTitleLevel = arguments.length > 2 && arguments[2] !== void 0 ? arguments[2] : 0;
@@ -69,39 +69,22 @@ var parseMeta = function(comment) {
         };
     }
     var split = metaContent.trim().split(" ").filter(fn.isTruthy);
-    // get 'name'
-    var name = split.find(function(item) {
-        return item.match(/^[A-Za-z-_.]/);
+    var name = ArrayTools.findAndRemove(split, function(item) {
+        return item.match(/^[A-Za-z_]/);
     });
-    if (name) split = split.filter(function(item) {
-        return item !== name;
-    });
-    // get 'priority'
-    var priorityItem = split.find(function(item) {
+    var priorityItem = ArrayTools.findAndRemove(split, function(item) {
         return item.match(/^[0-9-.]*$/);
     });
     var priority = Number(priorityItem || defaultPriority);
-    if (priorityItem) split = split.filter(function(item) {
-        return item !== priorityItem;
-    });
-    // get 'titleLevel'
-    var titleLevelItem = split.find(function(item) {
+    var titleLevelItem = ArrayTools.findAndRemove(split, function(item) {
         return item.match(/^#/);
     });
     var titleLevel = titleLevelItem ? titleLevelItem.split("#").length - 1 : defaultTitleLevel;
-    if (titleLevelItem) split = split.filter(function(item) {
-        return item !== titleLevelItem;
-    });
-    // get 'subsection'
     var subsection = Boolean(titleLevelItem && titleLevelItem.endsWith("!"));
-    // get 'allowJSDocUpdates'
-    var allowJSDocUpdatesItem = split.find(function(item) {
+    var allowJSDocUpdatesItem = ArrayTools.findAndRemove(split, function(item) {
         return item.match(/@/);
     });
     var allowJSDocUpdates = Boolean(allowJSDocUpdatesItem);
-    if (allowJSDocUpdates) split = split.filter(function(item) {
-        return item !== allowJSDocUpdatesItem;
-    });
     return {
         fullMeta: fullMeta,
         name: name,

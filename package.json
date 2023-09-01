@@ -20,8 +20,8 @@
   },
   "scripts": {
     "build": "rm -rf ./dist && npx swc src -d dist && chmod +x ./dist/index.js",
-    "test": "yarn test:prepare && yarn test:run",
-    "test:prepare": "yarn build && rm -rf ./example/alias && cp -r ./example/alias-src ./example/alias && rm -rf ./example/src && cp -r ./example/src-src ./example/src",
+    "test": "yarn build && yarn test:prepare && yarn test:run",
+    "test:prepare": "rm -rf ./example/alias && cp -r ./example/alias-src ./example/alias && rm -rf ./example/src && cp -r ./example/src-src ./example/src",
     "test:run": "./dist/index.js --src example/src --output example/OUTPUT.md --template example/template.md --alias example/alias --jsdoc",
     "prepublishOnly": "yarn build"
   },

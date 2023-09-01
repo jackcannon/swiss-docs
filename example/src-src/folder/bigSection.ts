@@ -15,35 +15,35 @@ export namespace parentSection {
   export namespace childASection {
     // SWISS-DOCS-JSDOC-REMOVE-PREV-LINE
 
-    /**<!-- DOCS: childA-section.doFoo #### -->
+    /**<!-- DOCS: childA-section.doFoo #### @ -->
      * doFoo
      *
      * do a foo
      */
     export const doFoo = (param1?: string) => 'foo';
 
-    /**<!-- DOCS: childA-section.doBar #### -->
+    /**<!-- DOCS: childA-section.doBar #### @ -->
      * doBar
      *
      * do a bar
      */
     export const doBar = (param1?: string) => 'bar';
 
-    /**<!-- DOCS: childA-section.doBaz #### -->
+    /**<!-- DOCS: childA-section.doBaz #### @ -->
      * doBaz
      *
      * do a baz
      */
     export const doBaz = (param1?: string) => 'baz';
 
-    /**<!-- DOCS: childA-section.doQuz #### -->
+    /**<!-- DOCS: childA-section.doQuz #### @ -->
      * doQuz
      *
      * do a quz
      */
     export const doQuz = (param1?: string) => 'quz';
 
-    /**<!-- DOCS: childA-section.doCorge #### -->
+    /**<!-- DOCS: childA-section.doCorge #### @ -->
      * doCorge
      *
      * do a corge
@@ -59,35 +59,35 @@ export namespace parentSection {
   export namespace childBSection {
     // SWISS-DOCS-JSDOC-REMOVE-PREV-LINE
 
-    /**<!-- DOCS: childB-section.doLorem #### -->
+    /**<!-- DOCS: childB-section.doLorem #### @ -->
      * doLorem
      *
      * do a lorem
      */
     export const doLorem = (param1?: string) => 'lorem';
 
-    /**<!-- DOCS: childB-section.doIpsum #### -->
+    /**<!-- DOCS: childB-section.doIpsum #### @ -->
      * doIpsum
      *
      * do a ipsum
      */
     export const doIpsum = (param1?: string) => 'ipsum';
 
-    /**<!-- DOCS: childB-section.doDolor #### -->
+    /**<!-- DOCS: childB-section.doDolor #### @ -->
      * doDolor
      *
      * do a dolor
      */
     export const doDolor = (param1?: string) => 'dolor';
 
-    /**<!-- DOCS: childB-section.doSit #### -->
+    /**<!-- DOCS: childB-section.doSit #### @ -->
      * doSit
      *
      * do a sit
      */
     export const doSit = (param1?: string) => 'sit';
 
-    /**<!-- DOCS: childB-section.doAmet #### -->
+    /**<!-- DOCS: childB-section.doAmet #### @ -->
      * doAmet
      *
      * do a amet

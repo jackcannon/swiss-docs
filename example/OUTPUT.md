@@ -100,7 +100,7 @@ do a foo
 |-------------|
 | `string`    |
 
-<p style="text-align: right" align="right"><a href="#childa-section"> [↑ Back to childA Section ↑] </a></p>
+<p style="text-align: right" align="right"><a href="#childa-section"> [↑ Back to <b>childA Section</b> ↑] </a></p>
 
 #### doBar
 do a bar
@@ -113,7 +113,7 @@ do a bar
 |-------------|
 | `string`    |
 
-<p style="text-align: right" align="right"><a href="#childa-section"> [↑ Back to childA Section ↑] </a></p>
+<p style="text-align: right" align="right"><a href="#childa-section"> [↑ Back to <b>childA Section</b> ↑] </a></p>
 
 #### doBaz
 do a baz
@@ -126,7 +126,7 @@ do a baz
 |-------------|
 | `string`    |
 
-<p style="text-align: right" align="right"><a href="#childa-section"> [↑ Back to childA Section ↑] </a></p>
+<p style="text-align: right" align="right"><a href="#childa-section"> [↑ Back to <b>childA Section</b> ↑] </a></p>
 
 #### doQuz
 do a quz
@@ -139,7 +139,7 @@ do a quz
 |-------------|
 | `string`    |
 
-<p style="text-align: right" align="right"><a href="#childa-section"> [↑ Back to childA Section ↑] </a></p>
+<p style="text-align: right" align="right"><a href="#childa-section"> [↑ Back to <b>childA Section</b> ↑] </a></p>
 
 #### doCorge
 do a corge
@@ -152,7 +152,7 @@ do a corge
 |-------------|
 | `string`    |
 
-<p style="text-align: right" align="right"><a href="#childa-section"> [↑ Back to childA Section ↑] </a></p>
+<p style="text-align: right" align="right"><a href="#childa-section"> [↑ Back to <b>childA Section</b> ↑] </a></p>
 
 ### childB Section
 This is a childB section
@@ -177,7 +177,7 @@ do a lorem
 |-------------|
 | `string`    |
 
-<p style="text-align: right" align="right"><a href="#childb-section"> [↑ Back to childB Section ↑] </a></p>
+<p style="text-align: right" align="right"><a href="#childb-section"> [↑ Back to <b>childB Section</b> ↑] </a></p>
 
 #### doIpsum
 do a ipsum
@@ -190,7 +190,7 @@ do a ipsum
 |-------------|
 | `string`    |
 
-<p style="text-align: right" align="right"><a href="#childb-section"> [↑ Back to childB Section ↑] </a></p>
+<p style="text-align: right" align="right"><a href="#childb-section"> [↑ Back to <b>childB Section</b> ↑] </a></p>
 
 #### doDolor
 do a dolor
@@ -203,7 +203,7 @@ do a dolor
 |-------------|
 | `string`    |
 
-<p style="text-align: right" align="right"><a href="#childb-section"> [↑ Back to childB Section ↑] </a></p>
+<p style="text-align: right" align="right"><a href="#childb-section"> [↑ Back to <b>childB Section</b> ↑] </a></p>
 
 #### doSit
 do a sit
@@ -216,7 +216,7 @@ do a sit
 |-------------|
 | `string`    |
 
-<p style="text-align: right" align="right"><a href="#childb-section"> [↑ Back to childB Section ↑] </a></p>
+<p style="text-align: right" align="right"><a href="#childb-section"> [↑ Back to <b>childB Section</b> ↑] </a></p>
 
 #### doAmet
 do a amet
@@ -229,7 +229,7 @@ do a amet
 |-------------|
 | `string`    |
 
-<p style="text-align: right" align="right"><a href="#childb-section"> [↑ Back to childB Section ↑] </a></p>
+<p style="text-align: right" align="right"><a href="#childb-section"> [↑ Back to <b>childB Section</b> ↑] </a></p>
 
 <!-- DOCS: MAIN END -->
 

@@ -4,7 +4,7 @@
 
 //<!-- DOCS: 3 -->
 
-/**<!-- DOCS: subFunc-Alias_T.est ### -->
+/**<!-- DOCS: subFunc-Alias_T.est ### @ -->
  * subFunc
  *
  * this logs it out
