@@ -1,16 +1,22 @@
 # swiss-docs
 
 - [swiss-docs](#swiss-docs)
-    - [Setup](#setup)
-    - [Install](#install)
-    - [Add to scripts](#add-to-scripts)
+  - [Setup](#setup)
+  - [Install](#install)
+  - [Add to scripts](#add-to-scripts)
   - [Syntax](#syntax)
-    - [Values](#values)
+    - [Meta tag](#meta-tag)
       - [Name](#name)
       - [Header depth](#header-depth)
         - [Subsection](#subsection)
       - [Priority Level](#priority-level)
       - [Allow JSDoc Updates](#allow-jsdoc-updates)
+    - [Comment content](#comment-content)
+      - [Title](#title)
+      - [Accessors](#accessors)
+      - [Description](#description)
+        - [Example](#example)
+      - [JSDoc tags](#jsdoc-tags)
     - [Definitions](#definitions)
       - [README](#readme)
       - [File level](#file-level)
@@ -62,7 +68,7 @@ Add a script to your package.json
 
 ## Syntax
 
-### Values
+### Meta tag
 
 The following values can be combined in a single DOCS meta tag:
 
@@ -76,7 +82,7 @@ The following values can be combined in a single DOCS meta tag:
 
 An optional unique name for identifying what the DOCS comment is for. Used for DOCS-ALIAS
 
-Names may contain letters (upper and lower cases), numbers, `-`, `_`, or `.`. They cannot contain spaces, and has to start with a letter or `_`.
+Names may contain letters (upper and lower cases), numbers, `-`, `_`, `$`, or `.`. They cannot contain spaces, and has to start with a letter or `_`.
 
 ```typescript
 /**<!-- DOCS: something -->
@@ -149,6 +155,99 @@ const someFunc = (param: number): number => 1;
 ```
 
 <p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
+
+### Comment content
+
+#### Title
+
+The first line of the comment content should be the header title as it should be displayed in the README.
+
+Do not include `#`s as this is managed by the [Header depth](#header-depth) meta value.
+
+```typescript
+/**<!-- DOCS: something ## -->
+ * THIS IS THE TITLE
+ */
+```
+
+#### Accessors
+
+Accessors provide information on where to access the item from (e.g. `someObj.aFunc`), as it combined with any JSDoc tags to provide a function signature if applicable.
+
+Accessors are optional. If not present, the section is not added to the README.
+
+Accessors must go between the title and the description. They should have an empty space before any after them.
+
+You can have multiple accessors for a single item.
+
+The syntax for accessors in a `-` bullet points with single back tick `` \` `` quote marks. They must be `-` bullets, not `*` or `+`.
+
+```typescript
+/**<!-- DOCS: something ## -->
+ * Something
+ *
+ * - `ACCESSOR_A`
+ * - `ACCESSOR_B`
+ *
+ * This does something
+ */
+```
+
+#### Description
+
+The description describes what the item is and what is does.
+
+Descriptions are optional
+
+```typescript
+/**<!-- DOCS: something ## -->
+ * Something
+ *
+ * - `something`
+ *
+ * THIS IS THE DESCRIPTION BIT
+ */
+```
+
+##### Example
+
+You can include usage examples in the description of your item. Just use standard markdown code blocks.
+
+````typescript
+/**<!-- DOCS: something ## -->
+ * Something
+ *
+ * - `something`
+ *
+ * This does something
+ *
+ * ```typescript
+ * something(1); // 2
+ * ```
+ */
+````
+
+#### JSDoc tags
+
+You can include JSDoc tags such as @returns and @param to provide information on what an item gives and takes.
+
+To see how this can be updated automatically, see [Allow JSDoc Updates](#allow-jsdoc-updates).
+
+````typescript
+/**<!-- DOCS: something ## -->
+ * Something
+ *
+ * - `something`
+ *
+ * This does something
+ *
+ * ```typescript
+ * something(1); // 2
+ * ```
+ * @param {number} inputNum - a number
+ * @returns {number} - A different number
+ */
+````
 
 ### Definitions
 
