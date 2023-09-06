@@ -19,7 +19,7 @@ const getValueDisplay = (value: any) => {
 };
 
 const printOptions = (opts: CmdOptions) => {
-  console.log(`${coloredOut.HEADER('Running ')}${coloredOut.PACKAGENAME('swiss-node')}${coloredOut.HEADER(' with options:')}`);
+  console.log(`${coloredOut.HEADER('Running ')}${coloredOut.PACKAGENAME('swiss-docs')}${coloredOut.HEADER(' with options:')}`);
   Object.entries(opts).forEach(([key, value]) => console.log(`${coloredOut.PROPNAME(` - ${key}:`)} ${getValueDisplay(value)}`));
   console.log('');
 };

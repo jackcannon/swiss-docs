@@ -185,7 +185,7 @@ var getValueDisplay = function(value) {
     return coloredOut.REGULARVALUE(value + "");
 };
 var printOptions = function(opts) {
-    console.log("".concat(coloredOut.HEADER("Running ")).concat(coloredOut.PACKAGENAME("swiss-node")).concat(coloredOut.HEADER(" with options:")));
+    console.log("".concat(coloredOut.HEADER("Running ")).concat(coloredOut.PACKAGENAME("swiss-docs")).concat(coloredOut.HEADER(" with options:")));
     Object.entries(opts).forEach(function(param) {
         var _param = _slicedToArray(param, 2), key = _param[0], value = _param[1];
         return console.log("".concat(coloredOut.PROPNAME(" - ".concat(key, ":")), " ").concat(getValueDisplay(value)));
