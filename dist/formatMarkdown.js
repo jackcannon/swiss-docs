@@ -27,9 +27,10 @@ import { StringTools } from "swiss-ak";
 import { table } from "swiss-node";
 import { findAncestorSubsection, flattenTree } from "./utils/treeUtils.js";
 var specialToken = "SUPERSECRETSPECIALCHARACTERFORSWISS123GOAWAYTHX";
-var hasUniqueTitle = function(segment, flat) {
+var hasUniqueNormalID = function(segment, flat) {
+    var id = getIDFromTitle(segment.title);
     var sameTitle = flat.find(function(s) {
-        return s !== segment && s.title === segment.title;
+        return s !== segment && getIDFromTitle(s.title) === id;
     });
     return !sameTitle;
 };
@@ -46,7 +47,7 @@ var getTableOfContents = function(segments, opts, levelOffset) {
     var includeFirstLine = arguments.length > 3 && arguments[3] !== void 0 ? arguments[3] : false, flat = arguments.length > 4 ? arguments[4] : void 0;
     var lines = segments.map(function(segment) {
         var _segment_children;
-        var isUnique = hasUniqueTitle(segment, flat);
+        var isUnique = hasUniqueNormalID(segment, flat);
         var id = isUnique ? getIDFromTitle(segment.title) : getSpecialIDFromName(segment.name);
         var indent = "  ".repeat(segment.titleLevel - levelOffset);
         var titleOut = segment.subsection || ((_segment_children = segment.children) === null || _segment_children === void 0 ? void 0 : _segment_children.length) ? "**".concat(segment.title, "**") : segment.title;
@@ -67,7 +68,7 @@ var getParamTypeDisplay = function(param) {
     return param.isRestParam ? param.type.replace(/^\.\.\./, "") + "[]" : param.type;
 };
 var formatSegmentTitle = function(segment, opts, tree, flat) {
-    var isUnique = hasUniqueTitle(segment, flat);
+    var isUnique = hasUniqueNormalID(segment, flat);
     var hashes = "#".repeat(segment.titleLevel);
     if (isUnique) {
         return "".concat(hashes, " ").concat(segment.title);

@@ -221,7 +221,7 @@ export var runJSDocUpdate = function() {
                 case 1:
                     allFiles = _state.sent();
                     useFiles = allFiles;
-                    //.filter((file) => file.includes('lineCounter.ts'));
+                    // .filter((file) => file.includes('$$.ts'));
                     if (DEBUG_JSDOC) console.log(useFiles);
                     progressBar = getProgressBar(useFiles.length, {
                         prefix: " Updating JSDocs "
@@ -438,7 +438,7 @@ var updateSingleFile = function() {
                             ]);
                             // matches all the relevant props
                             if (originalComment.comment !== postEdited) {
-                                output = output.replace(originalComment.comment, postEdited);
+                                output = output.replace(originalComment.comment, postEdited.replaceAll("$", "$$$$"));
                             }
                         } catch (e) {
                             // do nothing

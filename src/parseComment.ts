@@ -15,7 +15,7 @@ const parseMeta = (comment: string, defaultPriority: number = 10000, defaultTitl
 
   let split = metaContent.trim().split(' ').filter(fn.isTruthy);
 
-  const name = ArrayTools.findAndRemove(split, (item) => item.match(/^[A-Za-z_]/));
+  const name = ArrayTools.findAndRemove(split, (item) => item.match(/^[A-Za-z_$]/));
 
   const priorityItem = ArrayTools.findAndRemove(split, (item) => item.match(/^[0-9-.]*$/));
   const priority = Number(priorityItem || defaultPriority);

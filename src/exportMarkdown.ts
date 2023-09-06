@@ -22,7 +22,7 @@ export const exportAndSave = async (tree: SegmentTree, opts: CmdOptions) => {
 
     const toc = formatPrimaryTOC(filteredSegments, opts, tree, flat);
 
-    const replacement = ['<!-- DOCS: TOC START -->', '', toc, '', '<!-- DOCS: TOC END -->'].join('\n');
+    const replacement = ['<!-- DOCS: TOC START -->', '', toc, '', '<!-- DOCS: TOC END -->'].join('\n').replaceAll('$', '$$$$');
 
     output = output.replace(/<!-- ?DOCS: ?(START TOC|TOC START) ?-->(.|\n)*?<!-- ?DOCS: ?(END TOC|TOC END) ?-->/gi, replacement);
   }
@@ -33,7 +33,8 @@ export const exportAndSave = async (tree: SegmentTree, opts: CmdOptions) => {
       // don't include segments with negative priority
       .filter((segment) => segment.priority >= 0);
     const main = formatMain(filteredSegments, opts, tree, flat);
-    const replacement = ['<!-- DOCS: MAIN START -->', '', main, '', '<!-- DOCS: MAIN END -->'].join('\n');
+
+    const replacement = ['<!-- DOCS: MAIN START -->', '', main, '', '<!-- DOCS: MAIN END -->'].join('\n').replaceAll('$', '$$$$');
 
     output = output.replace(/<!-- ?DOCS: ?(START MAIN|MAIN START) ?-->(.|\n)*?<!-- ?DOCS: ?(END MAIN|MAIN END) ?-->/gi, replacement);
   }

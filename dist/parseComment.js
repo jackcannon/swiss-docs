@@ -70,7 +70,7 @@ var parseMeta = function(comment) {
     }
     var split = metaContent.trim().split(" ").filter(fn.isTruthy);
     var name = ArrayTools.findAndRemove(split, function(item) {
-        return item.match(/^[A-Za-z_]/);
+        return item.match(/^[A-Za-z_$]/);
     });
     var priorityItem = ArrayTools.findAndRemove(split, function(item) {
         return item.match(/^[0-9-.]*$/);

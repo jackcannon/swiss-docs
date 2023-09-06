@@ -185,7 +185,7 @@ export var exportAndSave = function() {
                             toc,
                             "",
                             "<!-- DOCS: TOC END -->"
-                        ].join("\n");
+                        ].join("\n").replaceAll("$", "$$$$");
                         output = output.replace(/<!-- ?DOCS: ?(START TOC|TOC START) ?-->(.|\n)*?<!-- ?DOCS: ?(END TOC|TOC END) ?-->/gi, replacement);
                     }
                     wantsMain = tags.filter(function(tag) {
@@ -203,7 +203,7 @@ export var exportAndSave = function() {
                             main,
                             "",
                             "<!-- DOCS: MAIN END -->"
-                        ].join("\n");
+                        ].join("\n").replaceAll("$", "$$$$");
                         output = output.replace(/<!-- ?DOCS: ?(START MAIN|MAIN START) ?-->(.|\n)*?<!-- ?DOCS: ?(END MAIN|MAIN END) ?-->/gi, replacement1);
                     }
                     return [

@@ -6,8 +6,9 @@ import { CmdOptions, Segment, JSDocParam, SegmentFlatList, SegmentTree } from '.
 
 const specialToken = 'SUPERSECRETSPECIALCHARACTERFORSWISS123GOAWAYTHX';
 
-const hasUniqueTitle = (segment: Segment, flat: SegmentFlatList) => {
-  const sameTitle = flat.find((s) => s !== segment && s.title === segment.title);
+const hasUniqueNormalID = (segment: Segment, flat: SegmentFlatList) => {
+  const id = getIDFromTitle(segment.title);
+  const sameTitle = flat.find((s) => s !== segment && getIDFromTitle(s.title) === id);
   return !sameTitle;
 };
 
@@ -26,7 +27,7 @@ const getTableOfContents = (
   flat: SegmentFlatList
 ) => {
   const lines = segments.map((segment) => {
-    const isUnique = hasUniqueTitle(segment, flat);
+    const isUnique = hasUniqueNormalID(segment, flat);
     const id = isUnique ? getIDFromTitle(segment.title) : getSpecialIDFromName(segment.name);
 
     const indent = '  '.repeat(segment.titleLevel - levelOffset);
@@ -49,7 +50,7 @@ export const formatPrimaryTOC = (segments: SegmentFlatList, opts: CmdOptions, tr
 const getParamTypeDisplay = (param: JSDocParam) => (param.isRestParam ? param.type.replace(/^\.\.\./, '') + '[]' : param.type);
 
 const formatSegmentTitle = (segment: Segment, opts: CmdOptions, tree: SegmentTree, flat: SegmentFlatList) => {
-  const isUnique = hasUniqueTitle(segment, flat);
+  const isUnique = hasUniqueNormalID(segment, flat);
   const hashes = '#'.repeat(segment.titleLevel);
   if (isUnique) {
     return `${hashes} ${segment.title}`;

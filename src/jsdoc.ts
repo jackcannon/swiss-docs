@@ -20,7 +20,7 @@ export const runJSDocUpdate = async (opts: CmdOptions) => {
   const allFiles = await findSrcFiles(opts);
 
   const useFiles = allFiles;
-  //.filter((file) => file.includes('lineCounter.ts'));
+  // .filter((file) => file.includes('$$.ts'));
 
   if (DEBUG_JSDOC) console.log(useFiles);
 
@@ -145,7 +145,7 @@ const updateSingleFile = async (file: string) => {
 
         // matches all the relevant props
         if (originalComment.comment !== postEdited) {
-          output = output.replace(originalComment.comment, postEdited);
+          output = output.replace(originalComment.comment, postEdited.replaceAll('$', '$$$$'));
         }
       } catch (e) {
         // do nothing
