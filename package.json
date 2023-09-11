@@ -20,16 +20,16 @@
   },
   "scripts": {
     "build": "rm -rf ./dist && npx swc src -d dist && chmod +x ./dist/index.js",
-    "test": "yarn build && yarn test:prepare && yarn test:run",
-    "test:prepare": "rm -rf ./example/alias && cp -r ./example/alias-src ./example/alias && rm -rf ./example/src && cp -r ./example/src-src ./example/src",
-    "test:run": "./dist/index.js --src example/src --output example/OUTPUT.md --template example/template.md --alias example/alias --jsdoc",
+    "example": "yarn build && yarn example:prepare && yarn example:run",
+    "example:prepare": "rm -rf ./example/alias && cp -r ./example/alias-src ./example/alias && rm -rf ./example/src && cp -r ./example/src-src ./example/src",
+    "example:run": "./dist/index.js --src example/src --output example/OUTPUT.md --template example/template.md --alias example/alias --jsdoc",
     "prepublishOnly": "yarn build"
   },
   "dependencies": {
     "glob": "^9.1.2",
     "minimist": "^1.2.8",
     "swiss-ak": "^2.6.0",
-    "swiss-node": "^1.4.0",
+    "swiss-node": "^1.4.5",
     "ts-to-jsdoc": "^1.3.0"
   }
 }
