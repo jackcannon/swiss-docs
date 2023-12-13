@@ -1034,10 +1034,15 @@ swiss-ak@^2.4.0:
   resolved "https://registry.yarnpkg.com/swiss-ak/-/swiss-ak-2.4.0.tgz#967d1de7f74c6a5f67b489ea7c2af233bc329b1e"
   integrity sha512-Xi93QkjUKJ5jqASxB7X6L9Lb5DHQ4Zd6FeVsAh/Pu98AZSeLp8z4NZL/TiUZrWlX75WN4lBQ+ng75jyyQp2Pvw==
 
-swiss-node@^1.4.0:
-  version "1.4.0"
-  resolved "https://registry.yarnpkg.com/swiss-node/-/swiss-node-1.4.0.tgz#23912112d02453ad161fdf1596ceed7d2cb7f73e"
-  integrity sha512-w32e4jBrZ8Ui6sJLgR49wWk3hLU9Qf/8yzs5TianYWQrOXqMOnwTAQFGvxKUmsS2ABbc6/nvkvX8zPBsNOmz4g==
+swiss-ak@^2.6.0:
+  version "2.6.0"
+  resolved "https://registry.yarnpkg.com/swiss-ak/-/swiss-ak-2.6.0.tgz#ad729a2e04ac6446030be4ba5c35e996019808c2"
+  integrity sha512-sALskFVciH1maNqZpSu+uLfCkf/F/Fs4aGXPaK8Bf2FpK/hvZS9O2v666+ud/+Arb4KvpxDBqbn5ZUbpMCBslg==
+
+swiss-node@^1.4.5:
+  version "1.4.5"
+  resolved "https://registry.yarnpkg.com/swiss-node/-/swiss-node-1.4.5.tgz#efd7abe6c0d7eaba7c41af289b52bf0aa03ee0f2"
+  integrity sha512-ZOuioOpY94EEzLYIOHDlDb+8ZeIBKfcEEnqyXGM3UaqYgWyOgl+4IzqNrYcshMZLJ8odDccVba1RxpyGnHPHqQ==
   dependencies:
     chalk "^4.1.2"
     fuse.js "^6.6.2"

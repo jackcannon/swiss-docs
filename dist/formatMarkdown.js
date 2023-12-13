@@ -141,7 +141,8 @@ var formatSegmentJSDoc = function(segment, opts, tree, flat) {
                 hasTypes ? "left" : IGNORE,
                 hasDefaults ? "left" : IGNORE,
                 hasComments ? "left" : IGNORE // description
-            ])
+            ]),
+            maxWidth: Infinity
         });
         output += "\n" + tableOut.join("\n") + "\n";
     }
@@ -162,7 +163,9 @@ var formatSegmentJSDoc = function(segment, opts, tree, flat) {
                 hasComments1 ? returns.comment : IGNORE
             ])
         ];
-        var tableOut1 = table.markdown(rows1, header1);
+        var tableOut1 = table.markdown(rows1, header1, {
+            maxWidth: Infinity
+        });
         output += "\n" + tableOut1.join("\n") + "\n";
     }
     return output;

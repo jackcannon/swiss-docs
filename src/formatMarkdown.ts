@@ -114,7 +114,8 @@ const formatSegmentJSDoc = (segment: Segment, opts: CmdOptions, tree: SegmentTre
         hasTypes ? 'left' : IGNORE, // type
         hasDefaults ? 'left' : IGNORE, // default
         hasComments ? 'left' : IGNORE // description
-      ]) as any[]
+      ]) as any[],
+      maxWidth: Infinity
     });
     output += '\n' + tableOut.join('\n') + '\n';
   }
@@ -137,7 +138,7 @@ const formatSegmentJSDoc = (segment: Segment, opts: CmdOptions, tree: SegmentTre
       ])
     ];
 
-    const tableOut = table.markdown(rows, header);
+    const tableOut = table.markdown(rows, header, { maxWidth: Infinity });
     output += '\n' + tableOut.join('\n') + '\n';
   }
   return output;
