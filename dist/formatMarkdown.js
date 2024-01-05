@@ -179,9 +179,10 @@ var formatSegmentSignature = function(segment, opts, tree, flat) {
     var isFunction = !!((_segment_jsdoc = segment.jsdoc) === null || _segment_jsdoc === void 0 ? void 0 : _segment_jsdoc.returns);
     if (isFunction) {
         var _segment_jsdoc_params, _segment_jsdoc1, _segment_jsdoc_returns;
-        var params = (_segment_jsdoc_params = segment.jsdoc.params) === null || _segment_jsdoc_params === void 0 ? void 0 : _segment_jsdoc_params.map(function(param) {
+        var _segment_jsdoc_params_map_join;
+        var params = (_segment_jsdoc_params_map_join = (_segment_jsdoc_params = segment.jsdoc.params) === null || _segment_jsdoc_params === void 0 ? void 0 : _segment_jsdoc_params.map(function(param) {
             return "".concat(param.isRestParam ? "..." : "").concat(param.name).concat(param.type ? ": " + getParamTypeDisplay(param) : "");
-        }).join(", ");
+        }).join(", ")) !== null && _segment_jsdoc_params_map_join !== void 0 ? _segment_jsdoc_params_map_join : "";
         var funcSuffix = "(".concat(params, ")").concat(((_segment_jsdoc1 = segment.jsdoc) === null || _segment_jsdoc1 === void 0 ? void 0 : (_segment_jsdoc_returns = _segment_jsdoc1.returns) === null || _segment_jsdoc_returns === void 0 ? void 0 : _segment_jsdoc_returns.type) ? ": " + segment.jsdoc.returns.type : "");
         section = accessors.map(function(accessor) {
             return "".concat(accessor).concat(funcSuffix);

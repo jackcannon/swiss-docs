@@ -150,11 +150,12 @@ const formatSegmentSignature = (segment: Segment, opts: CmdOptions, tree: Segmen
 
   const isFunction = !!segment.jsdoc?.returns;
   if (isFunction) {
-    const params = segment.jsdoc.params
-      ?.map((param) => {
-        return `${param.isRestParam ? '...' : ''}${param.name}${param.type ? ': ' + getParamTypeDisplay(param) : ''}`;
-      })
-      .join(', ');
+    const params =
+      segment.jsdoc.params
+        ?.map((param) => {
+          return `${param.isRestParam ? '...' : ''}${param.name}${param.type ? ': ' + getParamTypeDisplay(param) : ''}`;
+        })
+        .join(', ') ?? '';
     const funcSuffix = `(${params})${segment.jsdoc?.returns?.type ? ': ' + segment.jsdoc.returns.type : ''}`;
 
     section = accessors.map((accessor) => `${accessor}${funcSuffix}`).join('\n');
