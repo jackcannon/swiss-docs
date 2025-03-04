@@ -197,7 +197,8 @@ var __generator = this && this.__generator || function(thisArg, body) {
     }
 };
 import fsP from "fs/promises";
-import { PromiseTools, getProgressBar } from "swiss-ak";
+import { PromiseTools } from "swiss-ak";
+import { getProgressBar } from "swiss-node";
 import transpile from "ts-to-jsdoc";
 import { write } from "./utils/write.js";
 import { warn } from "./utils/logs.js";

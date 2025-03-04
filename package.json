@@ -28,8 +28,8 @@
   "dependencies": {
     "glob": "^9.1.2",
     "minimist": "^1.2.8",
-    "swiss-ak": "^2.6.0",
-    "swiss-node": "^1.4.5",
+    "swiss-ak": "^3.1.0",
+    "swiss-node": "^3.3.1",
     "ts-to-jsdoc": "^1.3.0"
   }
 }
